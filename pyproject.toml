@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "binance-and-crypto-payment"
+version = "0.1.1"  # 🔺 bump version
+description = "Binance and Crypto Payment Checkout"
+readme = "README.md"
+authors = [{ name = "PayerURL" }]
+license = { text = "MIT" }
+dependencies = ["requests"]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Programming Language :: Python :: Implementation :: CPython"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
