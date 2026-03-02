@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "binance-and-crypto-payment"
-version = "0.1.5"  # 🔺 bump version
+version = "0.1.6"  # 🔺 bump version
 description = "Binance and Crypto Payment Checkout"
 readme = "README.md"
 authors = [{ name = "PayerURL" }]
@@ -32,13 +32,11 @@ keywords = [
 
 classifiers = [ 
   "Intended Audience :: Developers",
-  "Topic :: Office/Business :: Financial",
   "Topic :: Security :: Cryptography",
   "Topic :: Software Development :: Libraries",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
-  "Operating System :: OS Independent"
 ]
 
 [tool.setuptools.packages.find]
