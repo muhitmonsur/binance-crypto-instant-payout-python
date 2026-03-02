@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "binance-and-crypto-payment"
-version = "0.1.4"  # 🔺 bump version
+version = "0.1.5"  # 🔺 bump version
 description = "Binance and Crypto Payment Checkout"
 readme = "README.md"
 authors = [{ name = "PayerURL" }]
