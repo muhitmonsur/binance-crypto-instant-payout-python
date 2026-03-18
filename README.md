@@ -75,11 +75,15 @@ Get your API key: https://dash.payerurl.com/profile/get-api-credentials
 
 from binance_and_crypto_payment import CryptoPaymentClient
 
-client = CryptoPaymentClient("PUBLIC_KEY", "SECRET_KEY")
+client = CryptoPaymentClient(
+    public_key="YOUR_PUBLIC_KEY",
+    secret_key="YOUR_SECRET_KEY"
+)
 
 response = client.payment(
     invoice_id="INV001",
     amount=1.00,
+    currency="USD",
     items=[{"name": "Product", "qty": "1", "price": "1.00"}],
     data={
         "first_name": "John",
@@ -92,6 +96,62 @@ response = client.payment(
 )
 
 print(response)
+
+
+## Notify Url Callback
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.db import transaction
+import logging
+
+from binance_and_crypto_payment import CryptoPaymentNotify, CryptoPaymentException, StatusCode
+
+
+@csrf_exempt
+@require_POST
+def payerurl_notify(request):
+    notify = CryptoPaymentNotify(
+        public_key="YOUR_PUBLIC_KEY",
+        secret_key="YOUR_SECRET_KEY"
+    )
+
+    try:
+        result = notify.process(request)
+
+        if result["type"] == "cancelled":
+            return JsonResponse(
+                {"status": StatusCode.ORDER_CANCELLED, "message": "Order Cancelled"},
+                status=200
+            )
+
+        data = result["data"]
+
+        # -------------------------------
+        # 🔥 YOUR BUSINESS LOGIC GOES HERE
+        # -------------------------------
+        # Example pseudo-code:
+        # with transaction.atomic():
+        #     order = Order.objects.select_for_update().get(invoice_id=data["order_id"])
+        #     txn = Transaction.objects.select_for_update().get(order=order)
+        #     if order.status == "paid" or txn.status == "success":
+        #         return JsonResponse({"status": StatusCode.ALREADY_PROCESSED, "message": "Already processed"}, status=200)
+        #     txn.transaction_id = data["transaction_id"]
+        #     txn.status = "success"
+        #     txn.raw_response = request.POST.dict()
+        #     txn.save()
+        #     order.status = "paid"
+        #     order.invoice_id = data.get("ext_transaction_id", order.invoice_id)
+        #     order.save()
+
+        return JsonResponse({"status": StatusCode.SUCCESS, "message": "Payment processed successfully"}, status=200)
+
+    except CryptoPaymentException as e:
+        return JsonResponse({"status": e.code, "message": e.message}, status=400)
+
+    except Exception:        
+        return JsonResponse({"status": StatusCode.INTERNAL_ERROR, "message": "Internal error"}, status=500)
 
 
 <img src="https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-1.png">
