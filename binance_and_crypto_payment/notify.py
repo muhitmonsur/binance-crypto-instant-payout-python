@@ -4,6 +4,8 @@ import hmac
 import urllib.parse
 
 from .utils import php_http_build_query
+from binance_and_crypto_payment.exceptions import CryptoPaymentException
+from binance_and_crypto_payment.constants import StatusCode
 
 
 class CryptoPaymentNotify:
@@ -19,36 +21,23 @@ class CryptoPaymentNotify:
         self.secret_key = secret_key
 
     def process(self, request):
-        try:
-            public_key, signature = self._decode_auth(request)
-            self._validate_public_key(public_key)
+        public_key, signature = self._decode_auth(request)
+        self._validate_public_key(public_key)
 
-            data = self._extract_data(request)
+        data = self._extract_data(request)
 
-            status = self._validate_status(data["status_code"])
-            if status == "cancelled":
-                return {
-                    "status": False,
-                    "type": "cancelled",
-                    "message": "Order Cancelled"
-                }
+        status_type = self._validate_status(data["status_code"])
 
-            self._verify_signature(data, signature)
+        # Signature verification
+        self._verify_signature(data, signature)
 
-            return {
-                "status": True,
-                "type": "success",
-                "data": data
-            }
+        return {
+            "status": True,
+            "type": status_type,  # success / cancelled
+            "data": data
+        }
 
-        except ValueError as e:
-            return {
-                "status": False,
-                "type": "error",
-                "message": str(e)
-            }
-
-    # ---------------- PRIVATE METHODS ---------------- #
+    # ---------------- PRIVATE ---------------- #
 
     def _decode_auth(self, request):
         auth_header = request.headers.get("Authorization")
@@ -59,31 +48,59 @@ class CryptoPaymentNotify:
             auth_str = request.POST.get("authStr")
 
         if not auth_str:
-            raise ValueError("authStr not found")
+            raise CryptoPaymentException(
+                "authStr not found",
+                StatusCode.AUTH_ERROR
+            )
 
         try:
             decoded = base64.b64decode(auth_str).decode()
             return decoded.split(":", 1)
         except Exception:
-            raise ValueError("Invalid authorization format")
+            raise CryptoPaymentException(
+                "Invalid authorization format",
+                StatusCode.AUTH_FORMAT_ERROR
+            )
 
-    def _validate_public_key(self, received_key):
-        if self.public_key != received_key:
-            raise ValueError("Public key mismatch")
+    def _validate_public_key(self, key):
+        if key != self.public_key:
+            raise CryptoPaymentException(
+                "Public key mismatch",
+                StatusCode.AUTH_ERROR
+            )
 
     def _extract_data(self, request):
         POST = request.POST
+
         data = {key: POST.get(key, "") for key in self.REQUIRED_FIELDS}
 
         if not data["order_id"] or not data["transaction_id"]:
-            raise ValueError("Required fields missing")
+            raise CryptoPaymentException(
+                "Required fields missing",
+                StatusCode.VALIDATION_ERROR
+            )
 
         try:
             data["status_code"] = int(data["status_code"])
         except ValueError:
-            raise ValueError("Invalid status code")
+            raise CryptoPaymentException(
+                "Invalid status code",
+                StatusCode.INVALID_STATUS
+            )
 
         return data
+
+    def _validate_status(self, status_code):
+        if status_code == 20000:
+            return "cancelled"
+
+        if status_code != 200:
+            raise CryptoPaymentException(
+                "Order not complete",
+                StatusCode.VALIDATION_ERROR
+            )
+
+        return "success"
 
     def _verify_signature(self, data, signature_received):
         sorted_data = dict(sorted(data.items()))
@@ -97,13 +114,7 @@ class CryptoPaymentNotify:
         ).hexdigest()
 
         if not hmac.compare_digest(correct_signature, signature_received):
-            raise ValueError("Signature not matched")
-
-    def _validate_status(self, status_code):
-        if status_code == 20000:
-            return "cancelled"
-
-        if status_code != 200:
-            raise ValueError("Order not complete")
-
-        return "success"
+            raise CryptoPaymentException(
+                "Signature not matched",
+                StatusCode.AUTH_ERROR
+            )
