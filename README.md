@@ -9,9 +9,9 @@ pip install binance-and-crypto-payment
 
 # Binance & Crypto payment gateway for python
 
-[![Latest Stable Version](https://poser.pugx.org/payerurl/binance-and-crypto-checkout/v/stable)](https://packagist.org/packages/payerurl/binance-and-crypto-checkout)
-[![Total Downloads](https://poser.pugx.org/payerurl/binance-and-crypto-checkout/downloads)](https://packagist.org/packages/payerurl/binance-and-crypto-checkout)
-[![License](https://poser.pugx.org/payerurl/binance-and-crypto-checkout/license)](https://packagist.org/packages/payerurl/binance-and-crypto-checkout)
+# Support
+- Telegram: <a href="https://t.me/Payerurl" target="_blank" rel="noopener noreferrer">https://t.me/Payerurl</a>
+- Dashboard: <a href="https://payerurl.com" target="_blank" rel="noopener noreferrer">https://dash.payerurl.com</a>
 
 <img src="https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/banner-772x250.png">
 
@@ -56,9 +56,7 @@ Payerurl is a premier payment processor enabling direct cryptocurrency transfers
 ## 🔑 GET API KEY
 Get your API key: <a href="https://dash.payerurl.com/profile/get-api-credentials" target="_blank" rel="noopener noreferrer">https://dash.payerurl.com/profile/get-api-credentials</a>
 
-# Support
-- Telegram: <a href="https://t.me/Payerurl" target="_blank" rel="noopener noreferrer">https://t.me/Payerurl</a>
-- Website: <a href="https://payerurl.com" target="_blank" rel="noopener noreferrer">https://payerurl.com</a>
+
 
 
 
