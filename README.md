@@ -30,7 +30,7 @@ The projects serves as a seamless bridge between Binance and your Python applica
 * **Cost-Effective**: Incurs no network fees or additional hidden costs.
 * **Secure**: Enhanced security protocols help avoid scams and ensure transaction safety.
 
-### [LIVE DEMO](https://python.payerurl.com/)
+### <a href="https://python.payerurl.com/" target="_blank" rel="noopener noreferrer">👉 LIVE DEMO — Click to open in new tab</a>
 
 ### How This Package Works
 
@@ -51,11 +51,14 @@ The Binance and Crypto Payment Gateway automatically converts any fiat currency 
 Payerurl is a premier payment processor enabling direct cryptocurrency transfers from customers to merchant wallets. Merchants can integrate Binance personal/merchant APIs alongside various receiving wallets including USDT, BTC, ETH, and USDC. We utilize live market rates to ensure accurate conversion from local fiat currencies to the corresponding cryptocurrency amount.
 
 
+### <a href="https://python.payerurl.com/" target="_blank" rel="noopener noreferrer">🔴 LIVE DEMO</a>
+
 ## 🔑 GET API KEY
+Get your API key: <a href="https://dash.payerurl.com/profile/get-api-credentials" target="_blank" rel="noopener noreferrer">https://dash.payerurl.com/profile/get-api-credentials</a>
 
-Get your API key: https://dash.payerurl.com/profile/get-api-credentials
-
-<img src="https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-2.png">
+# Support
+- Telegram: <a href="https://t.me/Payerurl" target="_blank" rel="noopener noreferrer">https://t.me/Payerurl</a>
+- Website: <a href="https://payerurl.com" target="_blank" rel="noopener noreferrer">https://payerurl.com</a>
 
 
 
