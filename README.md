@@ -9,10 +9,6 @@ pip install binance-and-crypto-payment
 
 # Binance & Crypto payment gateway for python
 
-## 📞 Contact US
-#### 🌐 Website: <a href="https://payerurl.com" target="_blank" rel="noopener noreferrer">https://payerurl.com</a>
-#### 📞 Telegram: <a href="https://t.me/Payerurl" target="_blank" rel="noopener noreferrer">https://t.me/Payerurl (live chat)</a>
-#### 📧 Email: support@payerurl.com
 
 <img src="https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/banner-772x250.png">
 
@@ -30,6 +26,11 @@ The projects serves as a seamless bridge between Binance and your Python applica
 * **Fast and Simple**: No complex redirects or external logins for the user.
 * **Cost-Effective**: Incurs no network fees or additional hidden costs.
 * **Secure**: Enhanced security protocols help avoid scams and ensure transaction safety.
+
+## 📞 Contact US
+#### 🌐 Website: <a href="https://payerurl.com" target="_blank" rel="noopener noreferrer">https://payerurl.com</a>
+#### 📞 Telegram: <a href="https://t.me/Payerurl" target="_blank" rel="noopener noreferrer">https://t.me/Payerurl (live chat)</a>
+#### 📧 Email: support@payerurl.com
 
 ### <a href="https://python.payerurl.com/" target="_blank" rel="noopener noreferrer">👉 LIVE DEMO — Click to open in new tab</a>
 
