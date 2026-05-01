@@ -1,4 +1,4 @@
-# Direct-to-Wallet python Crypto Gateway: Fast Binance payment API (No Merchant Needed)
+# Direct-to-Wallet python Crypto Gateway: Fast Binance payment API (No Merchant account Needed)
 
 Official Python SDK for Binance and Crypto Payment integration.
 
