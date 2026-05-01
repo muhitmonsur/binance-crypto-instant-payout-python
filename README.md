@@ -7,7 +7,7 @@ Official Python SDK for Binance and Crypto Payment integration.
 pip install binance-and-crypto-payment
 
 
-# Accept USDT USDC BTC & ETH in python: 10-Minute Binance Payment Gateway Integration: No Merchant Account Required
+# Accept USDT USDC BTC & ETH in python: 10-Minute Binance Payment Gateway Integration
 
 
 <img src="https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/banner-772x250.png">
