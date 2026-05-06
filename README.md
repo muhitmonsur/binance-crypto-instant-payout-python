@@ -7,59 +7,8 @@ Official Python SDK for Binance and Crypto Payment integration.
 pip install binance-and-crypto-payment
 
 
-# Accept USDT USDC BTC & ETH in python: 10-Minute Binance Payment Gateway Integration
-
-
-<img src="https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/banner-772x250.png">
-
-## Introduction
-
-The Binance and Crypto Payment Gateway python projects is powered by Payerurl. This package acts as a robust cryptocurrency payment processor, allowing merchants and developers to receive customer payments directly into their crypto wallets without the need for a middleman or intermediary account. We specialize in Binance QR code payments, providing a smooth, integrated experience where users never have to leave your python application to complete a transaction.
-
-
-### Binance QR Code Payment
-<img src="https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-5.png">
-This package is the ideal solution for developers seeking a secure Binance payment integration for Python and django. Binance payment is a contactless, borderless, and highly secure payment method. By using this projects , you can accept payments via Binance QR codes and process transactions through the Binance personal account API.
-
-The projects serves as a seamless bridge between Binance and your Python application. Customers simply scan the  QR code on your checkout page to finish the transaction. This process is:
-
-* **Fast and Simple**: No complex redirects or external logins for the user.
-* **Cost-Effective**: Incurs no network fees or additional hidden costs.
-* **Secure**: Enhanced security protocols help avoid scams and ensure transaction safety.
-
-## 📞 Contact US
-#### 🌐 Website: <a href="https://payerurl.com" target="_blank" rel="noopener noreferrer">https://payerurl.com</a>
-#### 📞 Telegram: <a href="https://t.me/Payerurl" target="_blank" rel="noopener noreferrer">https://t.me/Payerurl (live chat)</a>
-#### 📧 Email: support@payerurl.com
-
-### <a href="https://python.payerurl.com/" target="_blank" rel="noopener noreferrer">👉 LIVE DEMO — Click to open in new tab</a>
-
-### How This Package Works
-
-The Binance and Crypto Payment Gateway automatically converts any fiat currency to the selected cryptocurrency using live exchange rates. Once the payment is verified, funds are credited instantly to the merchant's wallet. The package then utilizes a secure API response to update your application's order status (e.g., from "Pending" to "Processing") in real-time.
-
-### Key Features
-
-* **Extensive Network Support**: Supports Binance QR payment, Binance Pay, USDT (TRC20/ERC20), USDC (ERC20), Bitcoin (BTC), and Ethereum (ETH ERC20).
-* **Fiat Compatibility**: Supports over 169+ fiat currencies (USD, CAD, GBP, EUR, etc.) with real-time exchange rates powered by payerurl.com.
-* **Developer Friendly**: 100% Free Open Source package designed specifically for the Laravel ecosystem.
-* **Privacy Focused**: No bank account or mandatory personal identity verification required.
-* **Simple Integration**: Streamlined signup process with easy API key integration.
-* **Accessibility**: No KYC required for withdrawals on Basic accounts.
-* **Dedicated Support**: 24/7 technical assistance for integration via Telegram: https://t.me/Payerurl.
-
-### About Payerurl
-
-Payerurl is a premier payment processor enabling direct cryptocurrency transfers from customers to merchant wallets. Merchants can integrate Binance personal/merchant APIs alongside various receiving wallets including USDT, BTC, ETH, and USDC. We utilize live market rates to ensure accurate conversion from local fiat currencies to the corresponding cryptocurrency amount.
-
-
-### <a href="https://python.payerurl.com/" target="_blank" rel="noopener noreferrer">🔴 LIVE DEMO</a>
-
 ## 🔑 GET API KEY
 Get your API key: <a href="https://dash.payerurl.com" target="_blank" rel="noopener noreferrer">https://dash.payerurl.com</a>
-
-
-
 
 
 ## 🚀 How It Works
@@ -128,6 +77,56 @@ print(response)
 5. you will get response like {'status': True, 'redirect_to': 'https://api-v2.payerurl.com/web-payment-option/PYP19DFD97D5DC'}
 6. the payment link is like "https://api-v2.payerurl.com/web-payment-option/PYP19DFD97D5DC"
 7. use this link to make a payment for your customer. 
+
+
+
+
+# Accept USDT USDC BTC & ETH in python: 10-Minute Binance Payment Gateway Integration
+
+
+<img src="https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/banner-772x250.png">
+
+## Introduction
+
+The Binance and Crypto Payment Gateway python projects is powered by Payerurl. This package acts as a robust cryptocurrency payment processor, allowing merchants and developers to receive customer payments directly into their crypto wallets without the need for a middleman or intermediary account. We specialize in Binance QR code payments, providing a smooth, integrated experience where users never have to leave your python application to complete a transaction.
+
+
+### Binance QR Code Payment
+<img src="https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-5.png">
+This package is the ideal solution for developers seeking a secure Binance payment integration for Python and django. Binance payment is a contactless, borderless, and highly secure payment method. By using this projects , you can accept payments via Binance QR codes and process transactions through the Binance personal account API.
+
+The projects serves as a seamless bridge between Binance and your Python application. Customers simply scan the  QR code on your checkout page to finish the transaction. This process is:
+
+* **Fast and Simple**: No complex redirects or external logins for the user.
+* **Cost-Effective**: Incurs no network fees or additional hidden costs.
+* **Secure**: Enhanced security protocols help avoid scams and ensure transaction safety.
+
+
+
+### <a href="https://python.payerurl.com/" target="_blank" rel="noopener noreferrer">👉 LIVE DEMO — Click to open in new tab</a>
+
+### How This Package Works
+
+The Binance and Crypto Payment Gateway automatically converts any fiat currency to the selected cryptocurrency using live exchange rates. Once the payment is verified, funds are credited instantly to the merchant's wallet. The package then utilizes a secure API response to update your application's order status (e.g., from "Pending" to "Processing") in real-time.
+
+### Key Features
+
+* **Extensive Network Support**: Supports Binance QR payment, Binance Pay, USDT (TRC20/ERC20), USDC (ERC20), Bitcoin (BTC), and Ethereum (ETH ERC20).
+* **Fiat Compatibility**: Supports over 169+ fiat currencies (USD, CAD, GBP, EUR, etc.) with real-time exchange rates powered by payerurl.com.
+* **Developer Friendly**: 100% Free Open Source package designed specifically for the Laravel ecosystem.
+* **Privacy Focused**: No bank account or mandatory personal identity verification required.
+* **Simple Integration**: Streamlined signup process with easy API key integration.
+* **Accessibility**: No KYC required for withdrawals on Basic accounts.
+* **Dedicated Support**: 24/7 technical assistance for integration via Telegram: https://t.me/Payerurl.
+
+### About Payerurl
+
+Payerurl is a premier payment processor enabling direct cryptocurrency transfers from customers to merchant wallets. Merchants can integrate Binance personal/merchant APIs alongside various receiving wallets including USDT, BTC, ETH, and USDC. We utilize live market rates to ensure accurate conversion from local fiat currencies to the corresponding cryptocurrency amount.
+
+
+### <a href="https://python.payerurl.com/" target="_blank" rel="noopener noreferrer">🔴 LIVE DEMO</a>
+
+
 
 
 
