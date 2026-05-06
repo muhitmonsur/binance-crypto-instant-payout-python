@@ -64,97 +64,71 @@ Get your API key: <a href="https://dash.payerurl.com" target="_blank" rel="noope
 
 ## 🚀 How It Works
 
-1. Collect user and order info on your platform.
-2. Call the payment() function with required details.
-3. User is redirected to PayerURL payment page.
-4. After payment:
+1. collect  your payerurl api public key and secret key . Get your API key: <a href="https://dash.payerurl.com" target="_blank" rel="noopener noreferrer">https://dash.payerurl.com</a>->dashboard->get api credencials
+2. Create a new file (payment.py)  in your project root directory
+3. Paste the below code block
+4. Call the payment() function with required details.
+5. User is redirected to PayerURL payment page.
+6. After payment:
    * User is redirected to redirect_url.
    * Your backend receives a callback at notify_url with transaction details.
    * On cancellation, user is returned to cancel_url.
 
 
-
-## Usage
+#------------------------------- Create a new file (payment.py)  in your project root directory ---------------#
+#------------------------------- paste the code below ---------------------------------------------------------#
+## payment.py
 
     from binance_and_crypto_payment import CryptoPaymentClient
+import time
 
-    client = CryptoPaymentClient(
-        public_key="YOUR_PUBLIC_KEY",
-        secret_key="YOUR_SECRET_KEY"
-    )
+invoice_id = f"INV-{int(time.time())}"
+amount=1.00
+currency="USD"
+first_name="customer first name"
+last_name= "customer last name"
+email= "customeremail@email.com"
 
-    response = client.payment(
-        invoice_id="INV001",
-        amount=1.00,
-        currency="USD",
-        items=[{"name": "Product", "qty": "1", "price": "1.00"}],
-        data={
-            "first_name": "John",
-            "last_name": "Doe",
-            "email": "john@example.com",
-            "redirect_url": "https://example.com/success",
-            "notify_url": "https://example.com/notify",
-            "cancel_url": "https://example.com/cancel",
-        }
-    )
-
-    print(response)
+# item variable
+productItemName= "Product"
+qty= "1"
+price= "1.00"
 
 
-## Notify Url Callback
-
-    from django.http import JsonResponse
-    from django.views.decorators.csrf import csrf_exempt
-    from django.views.decorators.http import require_POST
-    from django.db import transaction
-    import logging
-
-    from binance_and_crypto_payment import CryptoPaymentNotify, CryptoPaymentException, StatusCode
+client = CryptoPaymentClient(
+    public_key="fb113485f41655559c50151caa7793fe",  # your public key from dash.payerurl.com
+    secret_key="16a351ba29da3f928e3767e67fa35aac"   # your secret key from dash.payerurl.com
+)
 
 
-    @csrf_exempt
-    @require_POST
-    def payerurl_notify(request):
-        notify = CryptoPaymentNotify(
-            public_key="YOUR_PUBLIC_KEY",
-            secret_key="YOUR_SECRET_KEY"
-        )
+response = client.payment(
+    invoice_id=invoice_id,
+    amount=amount, # default if there has no value
+    currency=currency, # default currency, please change accroding to your store currency 
+    items=[{"name": productItemName , "qty": qty, "price": price}], # default product item description 
+    data={
+        "first_name": first_name,  
+        "last_name": last_name,    
+        "email": email, 
 
-        try:
-            result = notify.process(request)
+        ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
+        ##---------------------------------------------------------------------------------------##
+        "redirect_url": "https://python.payerurl.com/success",  # After successful payment customer will redirect to this url.
+        "notify_url": "https://python.payerurl.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
+        "cancel_url": "https://python.payerurl.com/cancel", # If you user cancel any payment, user will redirect to cancel url
+        ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
+        ##---------------------------------------------------------------------------------------##
+        
+        
+        
+    }
+)
 
-            if result["type"] == "cancelled":
-                return JsonResponse(
-                    {"status": StatusCode.ORDER_CANCELLED, "message": "Order Cancelled"},
-                    status=200
-                )
+print(response)
 
-            data = result["data"]
+#------------------------------- Create a new file (payment.py)  in your project root directory ---------------#
+#------------------------------- paste the code above ---------------------------------------------------------#
 
-            # -------------------------------
-            # 🔥 YOUR BUSINESS LOGIC GOES HERE
-            # -------------------------------
-            # Example pseudo-code:
-            # with transaction.atomic():
-            # order = Order.objects.select_for_update().get  (invoice_id=data["order_id"])
-            #     txn = Transaction.objects.select_for_update().get(order=order)
-            #     if order.status == "paid" or txn.status == "success":
-            #         return JsonResponse({"status": StatusCode.ALREADY_PROCESSED, "message": "Already processed"}, status=200)
-            #     txn.transaction_id = data["transaction_id"]
-            #     txn.status = "success"
-            #     txn.raw_response = request.POST.dict()
-            #     txn.save()
-            #     order.status = "paid"
-            #     order.invoice_id = data.get("ext_transaction_id", order.invoice_id)
-            #     order.save()
-
-            return JsonResponse({"status": StatusCode.SUCCESS, "message": "Payment processed successfully"}, status=200)
-
-        except CryptoPaymentException as e:
-            return JsonResponse({"status": e.code, "message": e.message}, status=400)
-
-        except Exception:        
-            return JsonResponse({"status": StatusCode.INTERNAL_ERROR, "message": "Internal error"}, status=500)
 
 
 <img src="https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-1.png">
