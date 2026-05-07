@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "binance-and-crypto-payment"
-version = "0.1.17"  # 🔺 bump version
+version = "0.1.18"  # 🔺 bump version
 description = "Binance and Crypto Payment Checkout"
 readme = "README.md"
 authors = [{ name = "PayerURL" }]
@@ -12,22 +12,18 @@ license = { text = "MIT" }
 dependencies = ["requests"]
 
 keywords = [
-  "paypal",
   "crypto",
-  "cryptocurrency",
   "bitcoin",
   "ethereum",
-  "binance",
   "coinbase",
   "usdt",
   "usdc",
   "payment",
   "payment-gateway",
   "crypto-payment",
-  "binance-payment",
-  "web3",
-  "blockchain",
-  "fintech"
+  "binance-api",
+  "binance",
+   "binance-payment"
 ]
 
 classifiers = [ 
