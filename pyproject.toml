@@ -4,29 +4,22 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "binance-and-crypto-payment"
-version = "0.1.18"  # 🔺 bump version
-description = "Binance and Crypto Payment Checkout"
+version = "0.1.19"
+description = "Accept Bitcoin, USDT, USDC, ETH and Binance Pay directly into your wallet — no merchant account, no KYC, 10-minute Python integration"
 readme = "README.md"
 authors = [{ name = "PayerURL" }]
 license = { text = "MIT" }
 dependencies = ["requests"]
-
 keywords = [
-  "crypto",
-  "bitcoin",
-  "ethereum",
-  "coinbase",
-  "usdt",
-  "usdc",
-  "payment",
-  "payment-gateway",
-  "crypto-payment",
-  "binance-api",
-  "binance",
-   "binance-payment"
+  "crypto", "bitcoin", "ethereum", "binance", "binance-api", "binance-payment",
+  "binance-pay", "usdt", "usdc", "trc20", "erc20", "bep20", "payment",
+  "payment-gateway", "crypto-payment", "crypto-checkout", "checkout",
+  "invoice", "qr-code", "qr-payment", "merchant", "django", "flask", "fastapi",
+  "python-sdk", "web3", "wallet", "stablecoin", "accept-crypto", "e-commerce",
+  "online-payment", "bnb", "tether", "direct-payment", "no-kyc",
+  "django-payment", "flask-crypto"
 ]
-
-classifiers = [ 
+classifiers = [
   "Intended Audience :: Developers",
   "Topic :: Security :: Cryptography",
   "Topic :: Software Development :: Libraries",
@@ -37,4 +30,3 @@ classifiers = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-
