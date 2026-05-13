@@ -60,9 +60,13 @@ response = client.payment(
         "first_name": "John",
         "last_name": "Doe",
         "email": "john@example.com",
-        "redirect_url": "https://yoursite.com/success",
-        "notify_url": "https://yoursite.com/notify",
-        "cancel_url": "https://yoursite.com/cancel",
+            ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
+            ##---------------------------------------------------------------------------------------##
+            "redirect_url": "https://python.payerurl.com/success",  # After successful payment customer will redirect to this url.
+            "notify_url": "https://python.payerurl.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
+            "cancel_url": "https://python.payerurl.com/cancel", # If you user cancel any payment, user will redirect to cancel url
+            ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
+            ##---------------------------------------------------------------------------------------##
     }
 )
 
@@ -109,9 +113,13 @@ def create_payment(request):
             "first_name": request.user.first_name,
             "last_name": request.user.last_name,
             "email": request.user.email,
-            "redirect_url": "https://yoursite.com/success",
-            "notify_url": "https://yoursite.com/notify",
-            "cancel_url": "https://yoursite.com/cancel",
+            ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
+            ##---------------------------------------------------------------------------------------##
+            "redirect_url": "https://python.payerurl.com/success",  # After successful payment customer will redirect to this url.
+            "notify_url": "https://python.payerurl.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
+            "cancel_url": "https://python.payerurl.com/cancel", # If you user cancel any payment, user will redirect to cancel url
+            ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
+            ##---------------------------------------------------------------------------------------##
         }
     )
 
@@ -146,9 +154,13 @@ def pay():
             "first_name": request.form["first_name"],
             "last_name": request.form["last_name"],
             "email": request.form["email"],
-            "redirect_url": "https://yoursite.com/success",
-            "notify_url": "https://yoursite.com/notify",
-            "cancel_url": "https://yoursite.com/cancel",
+            ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
+            ##---------------------------------------------------------------------------------------##
+            "redirect_url": "https://python.payerurl.com/success",  # After successful payment customer will redirect to this url.
+            "notify_url": "https://python.payerurl.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
+            "cancel_url": "https://python.payerurl.com/cancel", # If you user cancel any payment, user will redirect to cancel url
+            ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
+            ##---------------------------------------------------------------------------------------##
         }
     )
     return redirect(response["redirect_to"])
