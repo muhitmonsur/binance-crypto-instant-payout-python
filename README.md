@@ -1,138 +1,250 @@
-# Direct-to-Wallet python Crypto Gateway: Fast Binance payment API (No Merchant account Needed)
+# 🪙 Binance & Crypto Payment Gateway for Python
 
-Official Python SDK for Binance and Crypto Payment integration.
+> Accept Bitcoin, USDT, USDC, ETH, and BNB payments directly into your wallet — no middleman, no merchant account, no KYC required.
 
-## Installation
+**Powered by [PayerURL](https://payerurl.com)** — the direct-to-wallet crypto payment processor for Python developers.
 
+🔴 **[LIVE DEMO](https://python.payerurl.com/)** | 🔑 **[Get API Key](https://dash.payerurl.com)** | 💬 **[Telegram Support](https://t.me/Payerurl)**
+
+---
+
+## ✅ Why Developers Choose This Package
+
+| Feature | Detail |
+|---|---|
+| 🏦 **No merchant account needed** | Payments go directly to your crypto wallet |
+| 🌍 **169+ fiat currencies** | USD, EUR, GBP, CAD and more — converted at live rates |
+| ⚡ **10-minute integration** | Simple API, clear docs, copy-paste code |
+| 🔒 **No KYC for withdrawals** | Basic accounts withdraw without identity verification |
+| 📱 **Binance QR Code payments** | Customers scan and pay without leaving your app |
+| 💸 **Zero hidden fees** | No network surcharges or platform fees |
+| 🛠️ **Django & Flask ready** | Works with any Python web framework |
+
+---
+
+## 📦 Installation
+
+```bash
 pip install binance-and-crypto-payment
+```
 
+---
 
-## 🔑 GET API KEY
-Get your API key: [https://dash.payerurl.com](https://dash.payerurl.com)
+## 🔑 Get Your API Key (Free)
 
+1. Sign up at **[dash.payerurl.com](https://dash.payerurl.com)**
+2. Go to **Dashboard → Get API Credentials**
+3. Copy your **Public Key** and **Secret Key**
 
-## 🚀 How It Works
+> 👉 Registration is free and takes under 2 minutes. No credit card required.
 
-1. collect  your payerurl api public key and secret key . Get your API key: [https://dash.payerurl.com](https://dash.payerurl.com)->dashboard->get api credencials
-2. Create a new file (payment.py)  in your project root directory
-3. Paste the below code block
+---
 
+## 🚀 Quick Start (5 Lines of Code)
 
-## payment.py
+```python
+from binance_and_crypto_payment import CryptoPaymentClient
+import time
 
-    from binance_and_crypto_payment import CryptoPaymentClient
-    import time
-    
-    invoice_id = f"INV-{int(time.time())}"
-    amount=1.00
-    currency="USD"
-    first_name="customer first name"
-    last_name= "customer last name"
-    email= "customeremail@email.com"
-    
-    # item variable
-    productItemName= "Product"
-    qty= "1"
-    price= "1.00"
-    
-    
+client = CryptoPaymentClient(
+    public_key="YOUR_PUBLIC_KEY",   # from dash.payerurl.com
+    secret_key="YOUR_SECRET_KEY"
+)
+
+response = client.payment(
+    invoice_id=f"INV-{int(time.time())}",
+    amount=10.00,
+    currency="USD",
+    items=[{"name": "Product", "qty": "1", "price": "10.00"}],
+    data={
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john@example.com",
+        "redirect_url": "https://yoursite.com/success",
+        "notify_url": "https://yoursite.com/notify",
+        "cancel_url": "https://yoursite.com/cancel",
+    }
+)
+
+print(response)
+# {'status': True, 'redirect_to': 'https://api-v2.payerurl.com/web-payment-option/PYP...'}
+```
+
+Send the customer to `response['redirect_to']` — they pay with crypto, you receive it instantly in your wallet.
+
+---
+
+## 🌐 Supported Cryptocurrencies & Networks
+
+| Currency | Networks |
+|---|---|
+| **USDT** | TRC20 (Tron), ERC20 (Ethereum) |
+| **USDC** | ERC20 (Ethereum) |
+| **Bitcoin (BTC)** | Bitcoin Network |
+| **Ethereum (ETH)** | ERC20 |
+| **Binance Pay** | Binance QR Code |
+
+---
+
+## 🔗 Django Integration Example
+
+```python
+# views.py
+from binance_and_crypto_payment import CryptoPaymentClient
+from django.http import JsonResponse
+import time
+
+def create_payment(request):
     client = CryptoPaymentClient(
-        public_key="PAYERURL API PUBLIC KEY",  # your public key from dash.payerurl.com
-        secret_key="PAYERURL API SECRET KEY"   # your secret key from dash.payerurl.com
+        public_key="YOUR_PUBLIC_KEY",
+        secret_key="YOUR_SECRET_KEY"
     )
-    
-    
+
     response = client.payment(
-        invoice_id=invoice_id,
-        amount=amount, # default if there has no value
-        currency=currency, # default currency, please change accroding to your store currency 
-        items=[{"name": productItemName , "qty": qty, "price": price}], # default product item description 
+        invoice_id=f"INV-{int(time.time())}",
+        amount=float(request.POST.get("amount")),
+        currency="USD",
+        items=[{"name": request.POST.get("product"), "qty": "1", "price": request.POST.get("amount")}],
         data={
-            "first_name": first_name,  
-            "last_name": last_name,    
-            "email": email, 
-    
-            ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
-            ##---------------------------------------------------------------------------------------##
-            "redirect_url": "https://python.payerurl.com/success",  # After successful payment customer will redirect to this url.
-            "notify_url": "https://python.payerurl.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
-            "cancel_url": "https://python.payerurl.com/cancel", # If you user cancel any payment, user will redirect to cancel url
-            ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
-            ##---------------------------------------------------------------------------------------##
+            "first_name": request.user.first_name,
+            "last_name": request.user.last_name,
+            "email": request.user.email,
+            "redirect_url": "https://yoursite.com/success",
+            "notify_url": "https://yoursite.com/notify",
+            "cancel_url": "https://yoursite.com/cancel",
         }
     )
-    
-    print(response)
 
-4. run python .\payment.py
-5. you will get response like {'status': True, 'redirect_to': 'https://api-v2.payerurl.com/web-payment-option/PYP19DFD97D5DC'}
-6. the payment link is like "https://api-v2.payerurl.com/web-payment-option/PYP19DFD97D5DC"
-7. use this link to make a payment for your customer. 
+    return JsonResponse(response)
+```
 
+---
 
+## 🔗 Flask Integration Example
 
+```python
+# app.py
+from flask import Flask, request, jsonify, redirect
+from binance_and_crypto_payment import CryptoPaymentClient
+import time
 
-# Accept USDT USDC BTC & ETH in python: 10-Minute Binance Payment Gateway Integration
+app = Flask(__name__)
 
+client = CryptoPaymentClient(
+    public_key="YOUR_PUBLIC_KEY",
+    secret_key="YOUR_SECRET_KEY"
+)
 
-![banner](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/banner-772x250.png)
+@app.route("/pay", methods=["POST"])
+def pay():
+    response = client.payment(
+        invoice_id=f"INV-{int(time.time())}",
+        amount=float(request.form["amount"]),
+        currency="USD",
+        items=[{"name": "Order", "qty": "1", "price": request.form["amount"]}],
+        data={
+            "first_name": request.form["first_name"],
+            "last_name": request.form["last_name"],
+            "email": request.form["email"],
+            "redirect_url": "https://yoursite.com/success",
+            "notify_url": "https://yoursite.com/notify",
+            "cancel_url": "https://yoursite.com/cancel",
+        }
+    )
+    return redirect(response["redirect_to"])
+```
 
-## Introduction
+---
 
-The Binance and Crypto Payment Gateway python projects is powered by Payerurl. This package acts as a robust cryptocurrency payment processor, allowing merchants and developers to receive customer payments directly into their crypto wallets without the need for a middleman or intermediary account. We specialize in Binance QR code payments, providing a smooth, integrated experience where users never have to leave your python application to complete a transaction.
+## 📲 How the Binance QR Payment Works
 
+1. Your app calls the API and gets a **payment URL**
+2. Customer is redirected to a secure checkout page
+3. Customer **scans the QR code** with their Binance app
+4. Payment is confirmed and funds land **directly in your wallet**
+5. Your `notify_url` receives a webhook with the order status update
 
-### Binance QR Code Payment
-![screenshot-5](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-5.png)
+No bank accounts. No intermediaries. No waiting.
 
-This package is the ideal solution for developers seeking a secure Binance payment integration for Python and django. Binance payment is a contactless, borderless, and highly secure payment method. By using this projects , you can accept payments via Binance QR codes and process transactions through the Binance personal account API.
+---
 
-The projects serves as a seamless bridge between Binance and your Python application. Customers simply scan the  QR code on your checkout page to finish the transaction. This process is:
+## 🛡️ Security & Privacy
 
-* **Fast and Simple**: No complex redirects or external logins for the user.
-* **Cost-Effective**: Incurs no network fees or additional hidden costs.
-* **Secure**: Enhanced security protocols help avoid scams and ensure transaction safety.
+- ✅ Payments go directly to **your** wallet — PayerURL never holds your funds
+- ✅ No mandatory KYC for basic accounts
+- ✅ No personal identity verification required to get started
+- ✅ Secure API with HMAC signature verification
+- ✅ MIT licensed — fully open source, audit it yourself
 
+---
 
+## 🌍 Supported Fiat Currencies (169+)
 
-### [👉 LIVE DEMO — Click to open in new tab](https://python.payerurl.com/)
+USD, EUR, GBP, CAD, AUD, JPY, SGD, AED, INR, BRL, MXN, NGN, PKR, BDT, and 150+ more.
 
-### How This Package Works
+All fiat amounts are automatically converted to the equivalent crypto amount at live market rates.
 
-The Binance and Crypto Payment Gateway automatically converts any fiat currency to the selected cryptocurrency using live exchange rates. Once the payment is verified, funds are credited instantly to the merchant's wallet. The package then utilizes a secure API response to update your application's order status (e.g., from "Pending" to "Processing") in real-time.
+---
 
-### Key Features
+## 📊 Full Payment Flow Diagram
 
-* **Extensive Network Support**: Supports Binance QR payment, Binance Pay, USDT (TRC20/ERC20), USDC (ERC20), Bitcoin (BTC), and Ethereum (ETH ERC20).
-* **Fiat Compatibility**: Supports over 169+ fiat currencies (USD, CAD, GBP, EUR, etc.) with real-time exchange rates powered by payerurl.com.
-* **Developer Friendly**: 100% Free Open Source package designed specifically for the Laravel ecosystem.
-* **Privacy Focused**: No bank account or mandatory personal identity verification required.
-* **Simple Integration**: Streamlined signup process with easy API key integration.
-* **Accessibility**: No KYC required for withdrawals on Basic accounts.
-* **Dedicated Support**: 24/7 technical assistance for integration via Telegram: https://t.me/Payerurl.
+```
+Your App → PayerURL API → Checkout Page → Customer Pays (Binance/Crypto)
+                                                    ↓
+Your Wallet ← Funds (instant) ← Payment Verified ← Blockchain
+                                                    ↓
+          Your notify_url ← Webhook (order status update)
+```
 
-### About Payerurl
+---
 
-Payerurl is a premier payment processor enabling direct cryptocurrency transfers from customers to merchant wallets. Merchants can integrate Binance personal/merchant APIs alongside various receiving wallets including USDT, BTC, ETH, and USDC. We utilize live market rates to ensure accurate conversion from local fiat currencies to the corresponding cryptocurrency amount.
+## 🆚 Compared to Other Payment Solutions
 
+| | **PayerURL (This Package)** | Stripe / PayPal | Coinbase Commerce |
+|---|---|---|---|
+| No merchant account | ✅ | ❌ | ✅ |
+| Direct to your wallet | ✅ | ❌ | Partial |
+| No KYC required | ✅ (Basic) | ❌ | ❌ |
+| Binance QR support | ✅ | ❌ | ❌ |
+| Python SDK | ✅ | ✅ | ✅ |
+| 169+ fiat currencies | ✅ | Partial | ❌ |
+| Zero platform fees | ✅ | ❌ | ❌ |
 
-### [🔴 LIVE DEMO](https://python.payerurl.com/)
+---
 
+## ❓ FAQ
 
-![screenshot-1](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-1.png)
-![screenshot-2](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-2.png)
-![screenshot-4](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-4.png)
-![screenshot-6](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-6.png)
-![screenshot-7](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-7.png)
-![screenshot-8](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-8.png)
+**Do I need a Binance account?**
+Yes, to accept Binance QR payments. For USDT/BTC/ETH/USDC, you just need the corresponding wallet address.
 
+**Is there a transaction fee?**
+No network or hidden fees from PayerURL. Standard blockchain network fees may apply depending on the coin.
 
-## License
+**Can I use this without KYC?**
+Yes. Basic accounts can receive and withdraw crypto without mandatory identity verification.
 
-This projects is open-sourced software licensed under the [MIT license](LICENSE).
+**Does this work with Django REST Framework / FastAPI?**
+Yes — it's a pure Python client that works with any framework.
 
-## Support
+---
 
-For support and questions, please contact us via:
-- Telegram: https://t.me/Payerurl
-- Website: https://payerurl.com
+## 📬 Support
+
+| Channel | Link |
+|---|---|
+| 💬 Telegram | [t.me/Payerurl](https://t.me/Payerurl) |
+| 🌐 Website | [payerurl.com](https://payerurl.com) |
+| 📊 Dashboard | [dash.payerurl.com](https://dash.payerurl.com) |
+| 🔴 Live Demo | [python.payerurl.com](https://python.payerurl.com) |
+
+---
+
+## 📄 License
+
+MIT License — free for personal and commercial use.
+
+---
+
+## 🏷️ Keywords
+
+`crypto payment` `bitcoin payment python` `binance payment gateway` `usdt payment django` `usdc payment flask` `accept crypto python` `crypto checkout` `binance qr code` `trc20 payment` `erc20 payment` `no kyc payment gateway` `direct wallet payment` `crypto invoice python` `binance pay api` `payerurl python sdk`
