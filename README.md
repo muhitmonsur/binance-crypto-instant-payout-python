@@ -60,13 +60,13 @@ response = client.payment(
         "first_name": "John",
         "last_name": "Doe",
         "email": "john@example.com",
-            ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
-            ##---------------------------------------------------------------------------------------##
-            "redirect_url": "https://python.payerurl.com/success",  # After successful payment customer will redirect to this url.
-            "notify_url": "https://python.payerurl.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
-            "cancel_url": "https://python.payerurl.com/cancel", # If you user cancel any payment, user will redirect to cancel url
-            ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
-            ##---------------------------------------------------------------------------------------##
+        ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
+        ##---------------------------------------------------------------------------------------##
+        "redirect_url": "https://python.payerurl.com/success",  # After successful payment customer will redirect to this url.
+        "notify_url": "https://python.payerurl.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
+        "cancel_url": "https://python.payerurl.com/cancel", # If you user cancel any payment, user will redirect to cancel url
+        ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
+        ##---------------------------------------------------------------------------------------##
     }
 )
 
