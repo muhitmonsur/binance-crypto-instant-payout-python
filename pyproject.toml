@@ -11,13 +11,7 @@ authors = [{ name = "PayerURL" }]
 license = { text = "MIT" }
 dependencies = ["requests"]
 keywords = [
-  "crypto", "bitcoin", "ethereum", "binance", "binance-api", "binance-payment",
-  "binance-pay", "usdt", "usdc", "trc20", "erc20", "bep20", "payment",
-  "payment-gateway", "crypto-payment", "crypto-checkout", "checkout",
-  "invoice", "qr-code", "qr-payment", "merchant", "django", "flask", "fastapi",
-  "python-sdk", "web3", "wallet", "stablecoin", "accept-crypto", "e-commerce",
-  "online-payment", "bnb", "tether", "direct-payment", "no-kyc",
-  "django-payment", "flask-crypto"
+  "crypto","binance","coinbase","credit card to crypto",  "crypto payment gateway",  "cryptocurrency payment",  "bitcoin payment", 
 ]
 classifiers = [
   "Intended Audience :: Developers",
