@@ -62,9 +62,9 @@ response = client.payment(
         "email": "john@example.com",
         ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
         ##---------------------------------------------------------------------------------------##
-        "redirect_url": "https://python.payerurl.com/success",  # After successful payment customer will redirect to this url.
-        "notify_url": "https://python.payerurl.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
-        "cancel_url": "https://python.payerurl.com/cancel", # If you user cancel any payment, user will redirect to cancel url
+        "redirect_url": "https://python.yourdomain.com/success",  # After successful payment customer will redirect to this url.
+        "notify_url": "https://python.yourdomain.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
+        "cancel_url": "https://python.yourdomain.com/cancel", # If you user cancel any payment, user will redirect to cancel url
         ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
         ##---------------------------------------------------------------------------------------##
     }
@@ -115,9 +115,9 @@ def create_payment(request):
             "email": request.user.email,
             ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
             ##---------------------------------------------------------------------------------------##
-            "redirect_url": "https://python.payerurl.com/success",  # After successful payment customer will redirect to this url.
-            "notify_url": "https://python.payerurl.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
-            "cancel_url": "https://python.payerurl.com/cancel", # If you user cancel any payment, user will redirect to cancel url
+            "redirect_url": "https://python.yourdomain.com/success",  # After successful payment customer will redirect to this url.
+            "notify_url": "https://python.yourdomain.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
+            "cancel_url": "https://python.yourdomain.com/cancel", # If you user cancel any payment, user will redirect to cancel url
             ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
             ##---------------------------------------------------------------------------------------##
         }
@@ -156,9 +156,9 @@ def pay():
             "email": request.form["email"],
             ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
             ##---------------------------------------------------------------------------------------##
-            "redirect_url": "https://python.payerurl.com/success",  # After successful payment customer will redirect to this url.
-            "notify_url": "https://python.payerurl.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
-            "cancel_url": "https://python.payerurl.com/cancel", # If you user cancel any payment, user will redirect to cancel url
+            "redirect_url": "https://python.yourdomain.com/success",  # After successful payment customer will redirect to this url.
+            "notify_url": "https://python.yourdomain.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
+            "cancel_url": "https://python.yourdomain.com/cancel", # If you user cancel any payment, user will redirect to cancel url
             ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
             ##---------------------------------------------------------------------------------------##
         }
