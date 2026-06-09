@@ -4,23 +4,50 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "binance-and-crypto-payment"
-version = "0.1.21"
-description = "Accept Bitcoin, USDT, USDC, ETH and Binance Pay directly into your wallet — no merchant account, no KYC, 10-minute Python integration"
+version = "0.1.22"
+description = "Accept Binance QR code, Bitcoin, USDT, USDC Pay directly into your wallet — no merchant account, no KYC, 10-minute Python integration"
 readme = "README.md"
-authors = [{ name = "PayerURL" }]
+authors = [{ name = "PayerURL", email = "info@payerurl.com" }]
 license = { text = "MIT" }
+requires-python = ">=3.8"
 dependencies = ["requests"]
 keywords = [
-  "crypto","binance","coinbase","credit card to crypto",  "crypto payment gateway",  "cryptocurrency payment",  "bitcoin payment", 
+  "crypto",
+  "bitcoin",
+  "binance",
+  "coinbase",
+  "crypto-payment",
+  "django-payment",
+  "flask-payment",
+  "credit-card-to-crypto",
 ]
 classifiers = [
+  "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
-  "Topic :: Security :: Cryptography",
-  "Topic :: Software Development :: Libraries",
+  "Intended Audience :: Financial and Insurance Industry",
+  "Topic :: Office/Business :: Financial",
+  "Topic :: Office/Business :: Financial :: Point-Of-Sale",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Internet :: WWW/HTTP",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: OS Independent",
+  "Natural Language :: English",
 ]
+
+[project.urls]
+Homepage = "https://payerurl.com"
+Documentation = "https://python.payerurl.com"
+Repository = "https://github.com/payerurl/binance-and-crypto-payment"
+"Bug Tracker" = "https://github.com/payerurl/binance-and-crypto-payment/issues"
+"Live Demo" = "https://python.payerurl.com"
+Dashboard = "https://dash.payerurl.com"
 
 [tool.setuptools.packages.find]
 where = ["."]
