@@ -4,6 +4,11 @@
 
 **Powered by [PayerURL](https://payerurl.com)** — the direct-to-wallet crypto payment processor for Python developers.
 
+[![PyPI Version](https://img.shields.io/pypi/v/binance-and-crypto-payment?color=orange)](https://pypi.org/project/binance-and-crypto-payment/)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/binance-and-crypto-payment?color=blue)](https://pypi.org/project/binance-and-crypto-payment/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/binance-and-crypto-payment)](https://pypi.org/project/binance-and-crypto-payment/)
+[![License](https://img.shields.io/pypi/l/binance-and-crypto-payment?color=green)](https://opensource.org/licenses/MIT)
+
 🔴 **[LIVE DEMO](https://python.payerurl.com/)** | 🔑 **[Get API Key](https://dash.payerurl.com)** | 💬 **[Telegram Support](https://t.me/Payerurl)**
 
 ---
@@ -18,7 +23,7 @@
 | 🔒 **No KYC for withdrawals** | Basic accounts withdraw without identity verification |
 | 📱 **Binance QR Code payments** | Customers scan and pay without leaving your app |
 | 💸 **Zero hidden fees** | No network surcharges or platform fees |
-| 🛠️ **Django & Flask ready** | Works with any Python web framework |
+| 🛠️ **Django, Flask & FastAPI ready** | Works with any Python web framework |
 
 ---
 
@@ -40,7 +45,7 @@ pip install binance-and-crypto-payment
 
 ---
 
-## 🚀 Quick Start (5 Lines of Code)
+## 🚀 Quick Start
 
 ```python
 from binance_and_crypto_payment import CryptoPaymentClient
@@ -48,7 +53,7 @@ import time
 
 client = CryptoPaymentClient(
     public_key="YOUR_PUBLIC_KEY",   # from dash.payerurl.com
-    secret_key="YOUR_SECRET_KEY"
+    secret_key="YOUR_SECRET_KEY"    # from dash.payerurl.com
 )
 
 response = client.payment(
@@ -60,21 +65,20 @@ response = client.payment(
         "first_name": "John",
         "last_name": "Doe",
         "email": "john@example.com",
-        ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
-        ##---------------------------------------------------------------------------------------##
-        "redirect_url": "https://python.yourdomain.com/success",  # After successful payment customer will redirect to this url.
-        "notify_url": "https://python.yourdomain.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
-        "cancel_url": "https://python.yourdomain.com/cancel", # If you user cancel any payment, user will redirect to cancel url
-        ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
-        ##---------------------------------------------------------------------------------------##
+        "redirect_url": "https://yoursite.com/payment/success",  # redirect after payment
+        "notify_url":   "https://yoursite.com/payment/notify",   # webhook: receives payment result
+        "cancel_url":   "https://yoursite.com/payment/cancel",   # redirect if customer cancels
     }
 )
 
 print(response)
 # {'status': True, 'redirect_to': 'https://api-v2.payerurl.com/web-payment-option/PYP...'}
+
+# Redirect the customer to the payment page
+payment_url = response["redirect_to"]
 ```
 
-Send the customer to `response['redirect_to']` — they pay with crypto, you receive it instantly in your wallet.
+> Replace `yoursite.com` with your actual domain. All three URLs must be publicly accessible endpoints on your server.
 
 ---
 
@@ -82,57 +86,70 @@ Send the customer to `response['redirect_to']` — they pay with crypto, you rec
 
 | Currency | Networks |
 |---|---|
-| **USDT** | TRC20 (Tron), ERC20 (Ethereum) |
-| **USDC** | ERC20 (Ethereum) |
+| **USDT** | TRC20 (Tron), ERC20 (Ethereum), BEP20 (BSC) |
+| **USDC** | ERC20 (Ethereum), BEP20 (BSC) |
 | **Bitcoin (BTC)** | Bitcoin Network |
 | **Ethereum (ETH)** | ERC20 |
+| **BNB** | BEP20 (BSC) |
 | **Binance Pay** | Binance QR Code |
 
 ---
 
-## 🔗 Django Integration Example
+## 🔗 Django Integration
 
 ```python
 # views.py
+from django.shortcuts import redirect
+from django.views import View
 from binance_and_crypto_payment import CryptoPaymentClient
-from django.http import JsonResponse
 import time
 
-def create_payment(request):
-    client = CryptoPaymentClient(
-        public_key="YOUR_PUBLIC_KEY",
-        secret_key="YOUR_SECRET_KEY"
-    )
+class CheckoutView(View):
+    def post(self, request):
+        client = CryptoPaymentClient(
+            public_key="YOUR_PUBLIC_KEY",
+            secret_key="YOUR_SECRET_KEY"
+        )
 
-    response = client.payment(
-        invoice_id=f"INV-{int(time.time())}",
-        amount=float(request.POST.get("amount")),
-        currency="USD",
-        items=[{"name": request.POST.get("product"), "qty": "1", "price": request.POST.get("amount")}],
-        data={
-            "first_name": request.user.first_name,
-            "last_name": request.user.last_name,
-            "email": request.user.email,
-            ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
-            ##---------------------------------------------------------------------------------------##
-            "redirect_url": "https://python.yourdomain.com/success",  # After successful payment customer will redirect to this url.
-            "notify_url": "https://python.yourdomain.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
-            "cancel_url": "https://python.yourdomain.com/cancel", # If you user cancel any payment, user will redirect to cancel url
-            ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
-            ##---------------------------------------------------------------------------------------##
-        }
-    )
+        response = client.payment(
+            invoice_id=f"INV-{int(time.time())}",
+            amount=float(request.POST.get("amount", 10.00)),
+            currency="USD",
+            items=[{
+                "name":  request.POST.get("product", "Order"),
+                "qty":   "1",
+                "price": request.POST.get("amount", "10.00"),
+            }],
+            data={
+                "first_name": request.user.first_name,
+                "last_name":  request.user.last_name,
+                "email":      request.user.email,
+                "redirect_url": request.build_absolute_uri("/payment/success/"),
+                "notify_url":   request.build_absolute_uri("/payment/notify/"),
+                "cancel_url":   request.build_absolute_uri("/payment/cancel/"),
+            }
+        )
 
-    return JsonResponse(response)
+        return redirect(response["redirect_to"])
+```
+
+```python
+# urls.py
+from django.urls import path
+from .views import CheckoutView
+
+urlpatterns = [
+    path("checkout/", CheckoutView.as_view(), name="checkout"),
+]
 ```
 
 ---
 
-## 🔗 Flask Integration Example
+## 🔗 Flask Integration
 
 ```python
 # app.py
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, redirect
 from binance_and_crypto_payment import CryptoPaymentClient
 import time
 
@@ -149,22 +166,128 @@ def pay():
         invoice_id=f"INV-{int(time.time())}",
         amount=float(request.form["amount"]),
         currency="USD",
-        items=[{"name": "Order", "qty": "1", "price": request.form["amount"]}],
+        items=[{
+            "name":  request.form.get("product", "Order"),
+            "qty":   "1",
+            "price": request.form["amount"],
+        }],
         data={
             "first_name": request.form["first_name"],
-            "last_name": request.form["last_name"],
-            "email": request.form["email"],
-            ##-------------------------------DO NOT CHANGE THE BELOW SECTION-------------------------##
-            ##---------------------------------------------------------------------------------------##
-            "redirect_url": "https://python.yourdomain.com/success",  # After successful payment customer will redirect to this url.
-            "notify_url": "https://python.yourdomain.com/notify",  # After payment complete our system automatically sent payment detail on this notify_url in few seconds.
-            "cancel_url": "https://python.yourdomain.com/cancel", # If you user cancel any payment, user will redirect to cancel url
-            ##-------------------------------DO NOT CHANGE THE ABOVE SECTION-------------------------##
-            ##---------------------------------------------------------------------------------------##
+            "last_name":  request.form["last_name"],
+            "email":      request.form["email"],
+            "redirect_url": "https://yoursite.com/payment/success",
+            "notify_url":   "https://yoursite.com/payment/notify",
+            "cancel_url":   "https://yoursite.com/payment/cancel",
         }
     )
     return redirect(response["redirect_to"])
 ```
+
+---
+
+## 🔗 FastAPI Integration
+
+```python
+# main.py
+from fastapi import FastAPI, Form
+from fastapi.responses import RedirectResponse
+from binance_and_crypto_payment import CryptoPaymentClient
+import time
+
+app = FastAPI()
+
+client = CryptoPaymentClient(
+    public_key="YOUR_PUBLIC_KEY",
+    secret_key="YOUR_SECRET_KEY"
+)
+
+@app.post("/pay")
+async def pay(
+    amount: float = Form(...),
+    first_name: str = Form(...),
+    last_name: str = Form(...),
+    email: str = Form(...),
+):
+    response = client.payment(
+        invoice_id=f"INV-{int(time.time())}",
+        amount=amount,
+        currency="USD",
+        items=[{"name": "Order", "qty": "1", "price": str(amount)}],
+        data={
+            "first_name": first_name,
+            "last_name":  last_name,
+            "email":      email,
+            "redirect_url": "https://yoursite.com/payment/success",
+            "notify_url":   "https://yoursite.com/payment/notify",
+            "cancel_url":   "https://yoursite.com/payment/cancel",
+        }
+    )
+    return RedirectResponse(url=response["redirect_to"])
+```
+
+---
+
+## 🔔 Handling Webhooks (notify_url)
+
+When a payment is completed, PayerURL sends a `POST` request to your `notify_url`. Here is how to handle it:
+
+```python
+# Django webhook handler — views.py
+import json
+import hmac
+import hashlib
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def payment_notify(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    data = request.POST  # or json.loads(request.body) if JSON
+
+    order_id    = data.get("order_id")
+    status_code = data.get("status_code")
+    txn_id      = data.get("transaction_id")
+
+    if str(status_code) == "200":
+        # Payment confirmed — update your order status here
+        # Order.objects.filter(id=order_id).update(status="paid")
+        return JsonResponse({"status": 2040, "message": "Order updated"})
+
+    return JsonResponse({"status": 2050, "message": "Pending"})
+```
+
+```python
+# Flask webhook handler
+from flask import Flask, request, jsonify
+
+@app.route("/payment/notify", methods=["POST"])
+def payment_notify():
+    data        = request.form
+    order_id    = data.get("order_id")
+    status_code = data.get("status_code")
+    txn_id      = data.get("transaction_id")
+
+    if str(status_code) == "200":
+        # Payment confirmed — update your database here
+        return jsonify({"status": 2040, "message": "Order updated"})
+
+    return jsonify({"status": 2050, "message": "Pending"})
+```
+
+### Webhook Payload Fields
+
+| Field | Description |
+|---|---|
+| `order_id` | Your original invoice ID |
+| `transaction_id` | Blockchain transaction hash |
+| `status_code` | `200` = completed, `20000` = cancelled |
+| `confirm_rcv_amnt` | Amount received in fiat |
+| `confirm_rcv_amnt_curr` | Fiat currency (e.g. USD) |
+| `coin_rcv_amnt` | Amount received in crypto |
+| `coin_rcv_amnt_curr` | Crypto symbol (e.g. USDT) |
+| `txn_time` | Transaction timestamp |
 
 ---
 
@@ -174,7 +297,7 @@ def pay():
 2. Customer is redirected to a secure checkout page
 3. Customer **scans the QR code** with their Binance app
 4. Payment is confirmed and funds land **directly in your wallet**
-5. Your `notify_url` receives a webhook with the order status update
+5. Your `notify_url` receives a webhook with the order status
 
 No bank accounts. No intermediaries. No waiting.
 
@@ -184,9 +307,9 @@ No bank accounts. No intermediaries. No waiting.
 
 - ✅ Payments go directly to **your** wallet — PayerURL never holds your funds
 - ✅ No mandatory KYC for basic accounts
-- ✅ No personal identity verification required to get started
-- ✅ Secure API with HMAC signature verification
+- ✅ HMAC-SHA256 signature verification on all API calls
 - ✅ MIT licensed — fully open source, audit it yourself
+- ✅ No personal identity verification required to get started
 
 ---
 
@@ -198,19 +321,19 @@ All fiat amounts are automatically converted to the equivalent crypto amount at 
 
 ---
 
-## 📊 Full Payment Flow Diagram
+## 📊 Full Payment Flow
 
 ```
-Your App → PayerURL API → Checkout Page → Customer Pays (Binance/Crypto)
-                                                    ↓
-Your Wallet ← Funds (instant) ← Payment Verified ← Blockchain
-                                                    ↓
-          Your notify_url ← Webhook (order status update)
+Your App  ──►  PayerURL API  ──►  Checkout Page  ──►  Customer Pays
+                                                              │
+Your Wallet  ◄──  Funds (instant)  ◄──  Blockchain Confirmed ┘
+                                                              │
+              Your notify_url  ◄──  Webhook (status update) ─┘
 ```
 
 ---
 
-## 🆚 Compared to Other Payment Solutions
+## 🆚 Compared to Other Solutions
 
 | | **PayerURL (This Package)** | Stripe / PayPal | Coinbase Commerce |
 |---|---|---|---|
@@ -219,24 +342,32 @@ Your Wallet ← Funds (instant) ← Payment Verified ← Blockchain
 | No KYC required | ✅ (Basic) | ❌ | ❌ |
 | Binance QR support | ✅ | ❌ | ❌ |
 | Python SDK | ✅ | ✅ | ✅ |
+| Django / Flask / FastAPI | ✅ | ✅ | ❌ |
 | 169+ fiat currencies | ✅ | Partial | ❌ |
 | Zero platform fees | ✅ | ❌ | ❌ |
+| Webhook support | ✅ | ✅ | ✅ |
 
 ---
 
 ## ❓ FAQ
 
 **Do I need a Binance account?**
-Yes, to accept Binance QR payments. For USDT/BTC/ETH/USDC, you just need the corresponding wallet address.
+Yes, to accept Binance QR payments. For USDT/BTC/ETH/USDC, you only need the corresponding wallet address configured in your PayerURL dashboard.
 
 **Is there a transaction fee?**
-No network or hidden fees from PayerURL. Standard blockchain network fees may apply depending on the coin.
+No platform fees from PayerURL. Standard blockchain network fees may apply depending on the coin and network.
 
 **Can I use this without KYC?**
 Yes. Basic accounts can receive and withdraw crypto without mandatory identity verification.
 
+**What should my notify_url return?**
+Return a JSON response with `{"status": 2040, "message": "Order updated"}` on success. PayerURL expects a `200 HTTP` status code.
+
 **Does this work with Django REST Framework / FastAPI?**
-Yes — it's a pure Python client that works with any framework.
+Yes — it is a pure Python client that works with any Python web framework.
+
+**What Python versions are supported?**
+Python 3.8 and above (3.8, 3.9, 3.10, 3.11, 3.12, 3.13).
 
 ---
 
@@ -257,16 +388,6 @@ MIT License — free for personal and commercial use.
 
 ---
 
-
 ## 🔑 Keywords
 
-![crypto](https://img.shields.io/badge/-crypto-orange)
-![binance](https://img.shields.io/badge/-binance-yellow)
-![coinbase](https://img.shields.io/badge/-coinbase-blue)
-![bitcoin](https://img.shields.io/badge/-bitcoin-orange)
-![USDT](https://img.shields.io/badge/-USDT-green)
-![USDC](https://img.shields.io/badge/-USDC-blue)
-![credit card to crypto](https://img.shields.io/badge/-credit%20card%20to%20crypto-lightgrey)
-![bitcoin payment](https://img.shields.io/badge/-bitcoin%20payment-orange)
-![cryptocurrency payment](https://img.shields.io/badge/-cryptocurrency%20payment-blueviolet)
-![crypto payment gateway](https://img.shields.io/badge/-crypto%20payment%20gateway-red)
+`crypto` `bitcoin` `ethereum` `binance` `coinbase` `usdt` `usdc` `bnb` `tron` `payment` `payment-gateway` `crypto-payment-gateway` `cryptocurrency-payment` `bitcoin-payment` `binance-pay` `binance-api` `accept-crypto` `crypto-checkout` `django-payment` `flask-payment` `fastapi-payment` `usdt-trc20` `usdt-erc20` `no-kyc-payment` `instant-settlement` `crypto-webhook` `direct-to-wallet` `credit-card-to-crypto`
