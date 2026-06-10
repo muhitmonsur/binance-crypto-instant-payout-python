@@ -8,7 +8,7 @@
 [![PyPI Downloads](https://img.shields.io/pypi/dm/binance-and-crypto-payment?color=blue)](https://pypi.org/project/binance-and-crypto-payment/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/binance-and-crypto-payment)](https://pypi.org/project/binance-and-crypto-payment/)
 [![License](https://img.shields.io/pypi/l/binance-and-crypto-payment?color=green)](https://opensource.org/licenses/MIT)
-[![GitHub Stars](https://img.shields.io/github/stars/payerurl/binance-and-crypto-payment?style=social)](https://github.com/payerurl/binance-and-crypto-payment)
+[![GitHub Stars](https://img.shields.io/github/stars/muhitmonsur/binance-and-crypto-payment?style=social)](https://github.com/muhitmonsur/binance-and-crypto-payment)
 
 🔴 **[LIVE DEMO](https://python.payerurl.com/)** | 🔑 **[Get API Key](https://dash.payerurl.com)** | 💬 **[Telegram Support](https://t.me/Payerurl)**
 
