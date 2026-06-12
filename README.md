@@ -113,7 +113,7 @@ class CheckoutView(View):
         )
 
         response = client.payment(
-            invoice_id=f"INV-{int(time.time())}",
+            invoice_id=f"PYP-{int(time.time())}",
             amount=float(request.POST.get("amount", 10.00)),
             currency="USD",
             items=[{
@@ -164,7 +164,7 @@ client = CryptoPaymentClient(
 @app.route("/pay", methods=["POST"])
 def pay():
     response = client.payment(
-        invoice_id=f"INV-{int(time.time())}",
+        invoice_id=f"PYP-{int(time.time())}",
         amount=float(request.form["amount"]),
         currency="USD",
         items=[{
@@ -210,7 +210,7 @@ async def pay(
     email: str = Form(...),
 ):
     response = client.payment(
-        invoice_id=f"INV-{int(time.time())}",
+        invoice_id=f"PYP-{int(time.time())}",
         amount=amount,
         currency="USD",
         items=[{"name": "Order", "qty": "1", "price": str(amount)}],
