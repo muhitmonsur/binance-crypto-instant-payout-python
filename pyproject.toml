@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "binance-and-crypto-payment"
-version = "0.1.22"
+version = "0.1.23"
 description = "Accept Binance QR code, Bitcoin, USDT, USDC Pay directly into your wallet — no merchant account, no KYC, 10-minute Python integration"
 readme = "README.md"
 authors = [{ name = "PayerURL", email = "info@payerurl.com" }]
