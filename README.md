@@ -31,7 +31,7 @@
 ## 📦 Installation
 
 ```bash
-pip install binance-and-crypto-payment
+pip install binance-and-crypto-payment python-dotenv
 ```
 
 ---
@@ -46,16 +46,42 @@ pip install binance-and-crypto-payment
 
 ---
 
+## 🔐 Secure Configuration
+
+Create a `.env` file in your project root:
+
+```env
+PAYERURL_PUBLIC_KEY=your_public_key
+PAYERURL_SECRET_KEY=your_secret_key
+BASE_URL=https://yourdomain.com
+```
+
+Add `.env` to `.gitignore` — never commit your keys:
+
+```
+.env
+```
+
+> **In production** — skip the `.env` file entirely. Set these variables directly in your hosting dashboard (Railway, Render, Heroku, VPS). `os.getenv()` reads them automatically.
+
+---
+
 ## 🚀 Quick Start
 
 ```python
-from binance_and_crypto_payment import CryptoPaymentClient
+import os
 import time
+from dotenv import load_dotenv
+from binance_and_crypto_payment import CryptoPaymentClient
+
+load_dotenv()
 
 client = CryptoPaymentClient(
-    public_key="YOUR_PUBLIC_KEY",   # from dash.payerurl.com
-    secret_key="YOUR_SECRET_KEY"    # from dash.payerurl.com
+    public_key=os.getenv("PAYERURL_PUBLIC_KEY"),
+    secret_key=os.getenv("PAYERURL_SECRET_KEY")
 )
+
+BASE_URL = os.getenv("BASE_URL", "http://localhost:8000").rstrip("/")
 
 response = client.payment(
     invoice_id=f"PYP-{int(time.time())}",
@@ -63,12 +89,12 @@ response = client.payment(
     currency="USD",
     items=[{"name": "Product", "qty": "1", "price": "10.00"}],
     data={
-        "first_name": "John",
-        "last_name": "Doe",
-        "email": "john@example.com",
-        "redirect_url": "https://yoursite.com/payment/success",  # redirect after payment
-        "notify_url":   "https://yoursite.com/payment/notify",   # webhook: receives payment result
-        "cancel_url":   "https://yoursite.com/payment/cancel",   # redirect if customer cancels
+        "first_name":   "John",
+        "last_name":    "Doe",
+        "email":        "john@example.com",
+        "redirect_url": f"{BASE_URL}/payment/success/",
+        "notify_url":   f"{BASE_URL}/payment/notify/",
+        "cancel_url":   f"{BASE_URL}/payment/cancel/",
     }
 )
 
@@ -78,8 +104,6 @@ print(response)
 # Redirect the customer to the payment page
 payment_url = response["redirect_to"]
 ```
-
-> Replace `yoursite.com` with your actual domain. All three URLs must be publicly accessible endpoints on your server.
 
 ---
 
@@ -100,18 +124,33 @@ payment_url = response["redirect_to"]
 
 ```python
 # views.py
-from django.shortcuts import redirect
-from django.views import View
-from binance_and_crypto_payment import CryptoPaymentClient
+import os
 import time
+import logging
+from dotenv import load_dotenv
+from django.shortcuts import redirect, render
+from django.http import JsonResponse, HttpResponse
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from binance_and_crypto_payment import CryptoPaymentClient, CryptoPaymentNotify, CryptoPaymentException
 
+load_dotenv()
+
+PUBLIC_KEY = os.getenv("PAYERURL_PUBLIC_KEY")
+SECRET_KEY = os.getenv("PAYERURL_SECRET_KEY")
+BASE_URL   = os.getenv("BASE_URL", "http://localhost:8000").rstrip("/")
+
+if not PUBLIC_KEY or not SECRET_KEY:
+    raise ValueError("PAYERURL_PUBLIC_KEY and PAYERURL_SECRET_KEY must be set in .env")
+
+logger = logging.getLogger(__name__)
+
+
+# ── Checkout ──────────────────────────────────────────────────────
 class CheckoutView(View):
     def post(self, request):
-        client = CryptoPaymentClient(
-            public_key="YOUR_PUBLIC_KEY",
-            secret_key="YOUR_SECRET_KEY"
-        )
-
+        client = CryptoPaymentClient(public_key=PUBLIC_KEY, secret_key=SECRET_KEY)
         response = client.payment(
             invoice_id=f"PYP-{int(time.time())}",
             amount=float(request.POST.get("amount", 10.00)),
@@ -122,25 +161,75 @@ class CheckoutView(View):
                 "price": request.POST.get("amount", "10.00"),
             }],
             data={
-                "first_name": request.user.first_name,
-                "last_name":  request.user.last_name,
-                "email":      request.user.email,
-                "redirect_url": request.build_absolute_uri("/payment/success/"),
-                "notify_url":   request.build_absolute_uri("/payment/notify/"),
-                "cancel_url":   request.build_absolute_uri("/payment/cancel/"),
+                "first_name":   request.user.first_name,
+                "last_name":    request.user.last_name,
+                "email":        request.user.email,
+                "redirect_url": f"{BASE_URL}/payment/success/",
+                "notify_url":   f"{BASE_URL}/payment/notify/",
+                "cancel_url":   f"{BASE_URL}/payment/cancel/",
             }
         )
-
         return redirect(response["redirect_to"])
+
+
+# ── Success Callback ──────────────────────────────────────────────
+def payment_success(request):
+    order_id = request.GET.get("order_id", "")
+    # YOUR LOGIC HERE — e.g. show order confirmation page
+    return HttpResponse(f"Payment successful! Order: {order_id}")
+
+
+# ── Cancel Callback ───────────────────────────────────────────────
+def payment_cancel(request):
+    order_id = request.GET.get("order_id", "")
+    # YOUR LOGIC HERE — e.g. show cancel page or redirect to cart
+    return HttpResponse(f"Payment cancelled. Order: {order_id}")
+
+
+# ── Notify (Webhook) ──────────────────────────────────────────────
+@csrf_exempt
+@require_POST
+def notify_payerurl(request):
+    notify = CryptoPaymentNotify(public_key=PUBLIC_KEY, secret_key=SECRET_KEY)
+    try:
+        result = notify.process(request)
+    except CryptoPaymentException as e:
+        logger.warning(f"[NOTIFY] Failed: {e.code} | {e.message}")
+        return JsonResponse({"status": e.code, "message": e.message}, status=200)
+    except Exception as e:
+        logger.exception(f"[NOTIFY] Unexpected error: {e}")
+        return JsonResponse({"status": 5000, "message": "Internal error"}, status=200)
+
+    if result["type"] == "cancelled":
+        logger.info(f"[NOTIFY] Cancelled: {result['data'].get('order_id')}")
+        return JsonResponse({"status": 20000, "message": "Order cancelled"}, status=200)
+
+    data = result["data"]
+    logger.info(f"[NOTIFY] Success: {data}")
+    try:
+        # data["order_id"]         → your invoice ID
+        # data["transaction_id"]   → gateway transaction ID
+        # data["confirm_rcv_amnt"] → amount received
+        # data["coin_rcv_amnt"]    → crypto amount
+        # data["txn_time"]         → transaction time
+        # YOUR BUSINESS LOGIC HERE
+        # e.g. update your DB, send email, activate subscription, etc.
+        return JsonResponse({"status": 2040, "message": "Payment processed successfully"}, status=200)
+    except Exception as e:
+        logger.exception(f"[NOTIFY] Business logic error: {e}")
+        return JsonResponse({"status": 5000, "message": "Internal error"}, status=200)
 ```
 
 ```python
 # urls.py
 from django.urls import path
-from .views import CheckoutView
+from .views import CheckoutView, payment_success, payment_cancel, notify_payerurl
 
 urlpatterns = [
-    path("checkout/", CheckoutView.as_view(), name="checkout"),
+    path("payment/checkout/", CheckoutView.as_view(), name="checkout"),
+    path("payment/success/",  payment_success,        name="payment_success"),
+    path("payment/cancel/",   payment_cancel,         name="payment_cancel"),
+    path("payment/notify/",   notify_payerurl,        name="payment_notify"),
 ]
 ```
 
@@ -150,38 +239,92 @@ urlpatterns = [
 
 ```python
 # app.py
-from flask import Flask, request, redirect
-from binance_and_crypto_payment import CryptoPaymentClient
+import os
 import time
+from dotenv import load_dotenv
+from flask import Flask, request, redirect, jsonify
+from binance_and_crypto_payment import CryptoPaymentClient, CryptoPaymentNotify, CryptoPaymentException
+
+load_dotenv()
+
+PUBLIC_KEY = os.getenv("PAYERURL_PUBLIC_KEY")
+SECRET_KEY = os.getenv("PAYERURL_SECRET_KEY")
+BASE_URL   = os.getenv("BASE_URL", "http://localhost:5000").rstrip("/")
+
+if not PUBLIC_KEY or not SECRET_KEY:
+    raise ValueError("PAYERURL_PUBLIC_KEY and PAYERURL_SECRET_KEY must be set in .env")
 
 app = Flask(__name__)
 
-client = CryptoPaymentClient(
-    public_key="YOUR_PUBLIC_KEY",
-    secret_key="YOUR_SECRET_KEY"
-)
 
-@app.route("/pay", methods=["POST"])
-def pay():
+# ── Checkout ──────────────────────────────────────────────────────
+@app.route("/payment/checkout/", methods=["POST"])
+def checkout():
+    client = CryptoPaymentClient(public_key=PUBLIC_KEY, secret_key=SECRET_KEY)
     response = client.payment(
         invoice_id=f"PYP-{int(time.time())}",
-        amount=float(request.form["amount"]),
+        amount=float(request.form.get("amount", 10.00)),
         currency="USD",
         items=[{
             "name":  request.form.get("product", "Order"),
             "qty":   "1",
-            "price": request.form["amount"],
+            "price": request.form.get("amount", "10.00"),
         }],
         data={
-            "first_name": request.form["first_name"],
-            "last_name":  request.form["last_name"],
-            "email":      request.form["email"],
-            "redirect_url": "https://yoursite.com/payment/success",
-            "notify_url":   "https://yoursite.com/payment/notify",
-            "cancel_url":   "https://yoursite.com/payment/cancel",
+            "first_name":   request.form.get("first_name"),
+            "last_name":    request.form.get("last_name"),
+            "email":        request.form.get("email"),
+            "redirect_url": f"{BASE_URL}/payment/success/",
+            "notify_url":   f"{BASE_URL}/payment/notify/",
+            "cancel_url":   f"{BASE_URL}/payment/cancel/",
         }
     )
     return redirect(response["redirect_to"])
+
+
+# ── Success Callback ──────────────────────────────────────────────
+@app.route("/payment/success/")
+def payment_success():
+    order_id = request.args.get("order_id", "")
+    # YOUR LOGIC HERE — e.g. show order confirmation page
+    return f"Payment successful! Order: {order_id}"
+
+
+# ── Cancel Callback ───────────────────────────────────────────────
+@app.route("/payment/cancel/")
+def payment_cancel():
+    order_id = request.args.get("order_id", "")
+    # YOUR LOGIC HERE — e.g. show cancel page or redirect to cart
+    return f"Payment cancelled. Order: {order_id}"
+
+
+# ── Notify (Webhook) ──────────────────────────────────────────────
+@app.route("/payment/notify/", methods=["POST"])
+def notify_payerurl():
+    notify = CryptoPaymentNotify(public_key=PUBLIC_KEY, secret_key=SECRET_KEY)
+    try:
+        result = notify.process(request)
+    except CryptoPaymentException as e:
+        return jsonify({"status": e.code, "message": e.message}), 200
+    except Exception:
+        return jsonify({"status": 5000, "message": "Internal error"}), 200
+
+    if result["type"] == "cancelled":
+        return jsonify({"status": 20000, "message": "Order cancelled"}), 200
+
+    data = result["data"]
+    # data["order_id"]         → your invoice ID
+    # data["transaction_id"]   → gateway transaction ID
+    # data["confirm_rcv_amnt"] → amount received
+    # data["coin_rcv_amnt"]    → crypto amount
+    # data["txn_time"]         → transaction time
+    # YOUR BUSINESS LOGIC HERE
+    # e.g. update your DB, send email, activate subscription, etc.
+    return jsonify({"status": 2040, "message": "Payment processed successfully"}), 200
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
 ```
 
 ---
@@ -190,92 +333,117 @@ def pay():
 
 ```python
 # main.py
-from fastapi import FastAPI, Form
-from fastapi.responses import RedirectResponse
-from binance_and_crypto_payment import CryptoPaymentClient
+import os
 import time
+from dotenv import load_dotenv
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import JSONResponse, RedirectResponse, PlainTextResponse
+from binance_and_crypto_payment import CryptoPaymentClient, CryptoPaymentNotify, CryptoPaymentException
+
+load_dotenv()
+
+PUBLIC_KEY = os.getenv("PAYERURL_PUBLIC_KEY")
+SECRET_KEY = os.getenv("PAYERURL_SECRET_KEY")
+BASE_URL   = os.getenv("BASE_URL", "http://localhost:8000").rstrip("/")
+
+if not PUBLIC_KEY or not SECRET_KEY:
+    raise ValueError("PAYERURL_PUBLIC_KEY and PAYERURL_SECRET_KEY must be set in .env")
 
 app = FastAPI()
 
-client = CryptoPaymentClient(
-    public_key="YOUR_PUBLIC_KEY",
-    secret_key="YOUR_SECRET_KEY"
-)
 
-@app.post("/pay")
-async def pay(
-    amount: float = Form(...),
-    first_name: str = Form(...),
-    last_name: str = Form(...),
-    email: str = Form(...),
+# ── Checkout ──────────────────────────────────────────────────────
+@app.post("/payment/checkout/")
+async def checkout(
+    amount:     float = Form(...),
+    first_name: str   = Form(...),
+    last_name:  str   = Form(...),
+    email:      str   = Form(...),
+    product:    str   = Form("Order"),
 ):
+    client = CryptoPaymentClient(public_key=PUBLIC_KEY, secret_key=SECRET_KEY)
     response = client.payment(
         invoice_id=f"PYP-{int(time.time())}",
         amount=amount,
         currency="USD",
-        items=[{"name": "Order", "qty": "1", "price": str(amount)}],
+        items=[{"name": product, "qty": "1", "price": str(amount)}],
         data={
-            "first_name": first_name,
-            "last_name":  last_name,
-            "email":      email,
-            "redirect_url": "https://yoursite.com/payment/success",
-            "notify_url":   "https://yoursite.com/payment/notify",
-            "cancel_url":   "https://yoursite.com/payment/cancel",
+            "first_name":   first_name,
+            "last_name":    last_name,
+            "email":        email,
+            "redirect_url": f"{BASE_URL}/payment/success/",
+            "notify_url":   f"{BASE_URL}/payment/notify/",
+            "cancel_url":   f"{BASE_URL}/payment/cancel/",
         }
     )
     return RedirectResponse(url=response["redirect_to"])
+
+
+# ── Success Callback ──────────────────────────────────────────────
+@app.get("/payment/success/")
+async def payment_success(order_id: str = ""):
+    # YOUR LOGIC HERE — e.g. return confirmation page
+    return PlainTextResponse(f"Payment successful! Order: {order_id}")
+
+
+# ── Cancel Callback ───────────────────────────────────────────────
+@app.get("/payment/cancel/")
+async def payment_cancel(order_id: str = ""):
+    # YOUR LOGIC HERE — e.g. return cancel page or redirect to cart
+    return PlainTextResponse(f"Payment cancelled. Order: {order_id}")
+
+
+# ── Notify (Webhook) ──────────────────────────────────────────────
+@app.post("/payment/notify/")
+async def notify_payerurl(request: Request):
+    notify = CryptoPaymentNotify(public_key=PUBLIC_KEY, secret_key=SECRET_KEY)
+    try:
+        result = notify.process(request)
+    except CryptoPaymentException as e:
+        return JSONResponse({"status": e.code, "message": e.message}, status_code=200)
+    except Exception:
+        return JSONResponse({"status": 5000, "message": "Internal error"}, status_code=200)
+
+    if result["type"] == "cancelled":
+        return JSONResponse({"status": 20000, "message": "Order cancelled"}, status_code=200)
+
+    data = result["data"]
+    # data["order_id"]         → your invoice ID
+    # data["transaction_id"]   → gateway transaction ID
+    # data["confirm_rcv_amnt"] → amount received
+    # data["coin_rcv_amnt"]    → crypto amount
+    # data["txn_time"]         → transaction time
+    # YOUR BUSINESS LOGIC HERE
+    # e.g. update your DB, send email, activate subscription, etc.
+    return JSONResponse({"status": 2040, "message": "Payment processed successfully"}, status_code=200)
+```
+
+**Run:**
+```bash
+uvicorn main:app --reload
 ```
 
 ---
 
 ## 🔔 Handling Webhooks (notify_url)
 
-When a payment is completed, PayerURL sends a `POST` request to your `notify_url`. Here is how to handle it:
+When a payment completes, PayerURL sends a `POST` request to your `notify_url`. The `CryptoPaymentNotify` class handles all validation automatically — auth check, signature verification, and status detection.
 
 ```python
-# Django webhook handler — views.py
-import json
-import hmac
-import hashlib
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-
-@csrf_exempt
-def payment_notify(request):
-    if request.method != "POST":
-        return JsonResponse({"error": "Method not allowed"}, status=405)
-
-    data = request.POST  # or json.loads(request.body) if JSON
-
-    order_id    = data.get("order_id")
-    status_code = data.get("status_code")
-    txn_id      = data.get("transaction_id")
-
-    if str(status_code) == "200":
-        # Payment confirmed — update your order status here
-        # Order.objects.filter(id=order_id).update(status="paid")
-        return JsonResponse({"status": 2040, "message": "Order updated"})
-
-    return JsonResponse({"status": 2050, "message": "Pending"})
+result = notify.process(request)
+# result["type"] → "success" or "cancelled"
+# result["data"] → full webhook payload
 ```
 
-```python
-# Flask webhook handler
-from flask import Flask, request, jsonify
+### Callback URL Summary
 
-@app.route("/payment/notify", methods=["POST"])
-def payment_notify():
-    data        = request.form
-    order_id    = data.get("order_id")
-    status_code = data.get("status_code")
-    txn_id      = data.get("transaction_id")
+| URL | Trigger | Method |
+|---|---|---|
+| `redirect_url` | Customer paid successfully | `GET` (browser redirect) |
+| `cancel_url` | Customer cancelled payment | `GET` (browser redirect) |
+| `notify_url` | Gateway confirms payment server-side | `POST` (webhook) |
 
-    if str(status_code) == "200":
-        # Payment confirmed — update your database here
-        return jsonify({"status": 2040, "message": "Order updated"})
-
-    return jsonify({"status": 2050, "message": "Pending"})
-```
+> `redirect_url` and `cancel_url` are browser redirects — use them to show the customer a page. `notify_url` is a server-side webhook — use it to update your database.
 
 ### Webhook Payload Fields
 
@@ -289,6 +457,19 @@ def payment_notify():
 | `coin_rcv_amnt` | Amount received in crypto |
 | `coin_rcv_amnt_curr` | Crypto symbol (e.g. USDT) |
 | `txn_time` | Transaction timestamp |
+
+### Notify Response Codes
+
+| Code | Meaning |
+|---|---|
+| `2040` | Payment processed successfully |
+| `2030` | Auth error (key mismatch or missing) |
+| `2031` | Auth format error (invalid base64) |
+| `2050` | Validation error (missing fields or incomplete order) |
+| `20000` | Order cancelled |
+| `5000` | Internal server error |
+
+> Always return HTTP `200` for all responses — including errors. PayerURL reads the JSON `status` field, not the HTTP status code. Returning non-200 HTTP status will cause the gateway to retry indefinitely.
 
 ---
 
@@ -308,7 +489,7 @@ No bank accounts. No intermediaries. No waiting.
 
 - ✅ Payments go directly to **your** wallet — PayerURL never holds your funds
 - ✅ No mandatory KYC for basic accounts
-- ✅ HMAC-SHA256 signature verification on all API calls
+- ✅ HMAC-SHA256 signature verification on all webhook calls via `CryptoPaymentNotify`
 - ✅ MIT licensed — fully open source, audit it yourself
 - ✅ No personal identity verification required to get started
 
@@ -328,8 +509,9 @@ All fiat amounts are automatically converted to the equivalent crypto amount at 
 Your App  ──►  PayerURL API  ──►  Checkout Page  ──►  Customer Pays
                                                               │
 Your Wallet  ◄──  Funds (instant)  ◄──  Blockchain Confirmed ┘
-                                                              │
-              Your notify_url  ◄──  Webhook (status update) ─┘
+                                                         │         │
+                   redirect_url (success/cancel) ◄───────┘         │
+                              notify_url (webhook) ◄────────────────┘
 ```
 
 ---
@@ -362,7 +544,13 @@ No platform fees from PayerURL. Standard blockchain network fees may apply depen
 Yes. Basic accounts can receive and withdraw crypto without mandatory identity verification.
 
 **What should my notify_url return?**
-Return a JSON response with `{"status": 2040, "message": "Order updated"}` on success. PayerURL expects a `200 HTTP` status code.
+Return `{"status": 2040, "message": "Payment processed successfully"}` with HTTP `200`. Always return HTTP `200` for all responses — the gateway reads the JSON status field.
+
+**What is the difference between redirect_url and notify_url?**
+`redirect_url` is a browser redirect shown to the customer after payment. `notify_url` is a server-side webhook used to update your database — it fires independently of what the customer does.
+
+**How do I identify errors from the notify response?**
+Check the `status` field in the JSON body. `2030`/`2031` = auth errors, `2050` = validation error, `20000` = cancelled, `2040` = success, `5000` = internal error.
 
 **Does this work with Django REST Framework / FastAPI?**
 Yes — it is a pure Python client that works with any Python web framework.
