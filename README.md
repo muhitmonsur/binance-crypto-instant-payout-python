@@ -15,7 +15,9 @@
 ---
 
 ## ✅ Why Developers Choose This Package
-
+ 
+PayerURL is a trusted, production-proven crypto payment processor used by 1,000+ active merchants worldwide. The WooCommerce plugin alone holds **29 five-star reviews** with zero lower ratings on WordPress.org — praised consistently for responsive support, easy setup, and reliable payments.
+ 
 | Feature | Detail |
 |---|---|
 | 🏦 **No merchant account needed** | Payments go directly to your crypto wallet |
@@ -25,7 +27,9 @@
 | 📱 **Binance QR Code payments** | Customers scan and pay without leaving your app |
 | 💸 **Zero hidden fees** | No network surcharges or platform fees |
 | 🛠️ **Django, Flask & FastAPI ready** | Works with any Python web framework |
-
+| 🌐 **Multi-platform** | WooCommerce, OpenCart, PHP, Python, Node, Laravel |
+| 🧑‍💻 **24/7 support** | Real humans via Telegram — fast, hands-on help |
+| ⭐ **29 five-star reviews** | [Verified on WordPress.org](https://wordpress.org/plugins/payerurl-crypto-currency-payment-gateway-for-woocommerce/#reviews) — zero lower ratings |
 ---
 
 ## 📦 Installation
