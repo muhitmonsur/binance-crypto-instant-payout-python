@@ -78,13 +78,17 @@ import time
 from dotenv import load_dotenv
 from binance_and_crypto_payment import CryptoPaymentClient
 load_dotenv()
+
+# Payerurl API credentials
+# Do not share the credentials
+# Get your API key: https://dash.payerurl.com/profile/get-api-credentials
 client = CryptoPaymentClient(
     public_key=os.getenv("PAYERURL_PUBLIC_KEY"),
     secret_key=os.getenv("PAYERURL_SECRET_KEY")
 )
 BASE_URL = os.getenv("BASE_URL", "http://localhost:8000").rstrip("/")
 
-# items fields
+# Order item info
 item_name = "Product"
 item_qty = "1"
 item_price = "10.00"
@@ -93,12 +97,18 @@ items = [
     {"name": item_name, "qty": item_qty, "price": item_price}
 ]
 
-# data fields
+# Billing user info
 first_name = "John"
 last_name = "Doe"
 email = "john@example.com"
+
+# After successful payment customer will redirect to this url
 redirect_url = f"{BASE_URL}/payment/success/"
+
+# System will send payment response to this url
 notify_url = f"{BASE_URL}/payment/notify/"
+
+# If user cancels payment, they will redirect here
 cancel_url = f"{BASE_URL}/payment/cancel/"
 
 data = {
