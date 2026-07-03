@@ -77,35 +77,47 @@ import os
 import time
 from dotenv import load_dotenv
 from binance_and_crypto_payment import CryptoPaymentClient
-
 load_dotenv()
-
 client = CryptoPaymentClient(
     public_key=os.getenv("PAYERURL_PUBLIC_KEY"),
     secret_key=os.getenv("PAYERURL_SECRET_KEY")
 )
-
 BASE_URL = os.getenv("BASE_URL", "http://localhost:8000").rstrip("/")
+
+# items fields
+item_name = "Product"
+item_qty = "1"
+item_price = "10.00"
+
+items = [
+    {"name": item_name, "qty": item_qty, "price": item_price}
+]
+
+# data fields
+first_name = "John"
+last_name = "Doe"
+email = "john@example.com"
+redirect_url = f"{BASE_URL}/payment/success/"
+notify_url = f"{BASE_URL}/payment/notify/"
+cancel_url = f"{BASE_URL}/payment/cancel/"
+
+data = {
+    "first_name": first_name,
+    "last_name": last_name,
+    "email": email,
+    "redirect_url": redirect_url,
+    "notify_url": notify_url,
+    "cancel_url": cancel_url,
+}
 
 response = client.payment(
     invoice_id=f"PYP-{int(time.time())}",
     amount=10.00,
     currency="USD",
-    items=[{"name": "Product", "qty": "1", "price": "10.00"}],
-    data={
-        "first_name":   "John",
-        "last_name":    "Doe",
-        "email":        "john@example.com",
-        "redirect_url": f"{BASE_URL}/payment/success/",
-        "notify_url":   f"{BASE_URL}/payment/notify/",
-        "cancel_url":   f"{BASE_URL}/payment/cancel/",
-    }
+    items=items,
+    data=data
 )
-
 print(response)
-# {'status': True, 'redirect_to': 'https://api-v2.payerurl.com/web-payment-option/PYP...'}
-
-# Redirect the customer to the payment page
 payment_url = response["redirect_to"]
 ```
 
