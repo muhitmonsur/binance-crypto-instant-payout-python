@@ -4,22 +4,26 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "binance-and-crypto-payment"
-version = "0.1.26"
-description = "Accept Binance QR code, Bitcoin, USDT, USDC Pay directly into your wallet — no merchant account, no KYC, 10-minute Python integration"
+version = "0.1.27"
+description = "Crypto payment gateway SDK and Binance API for python"
 readme = "README.md"
 authors = [{ name = "PayerURL", email = "info@payerurl.com" }]
 license = { text = "MIT" }
 requires-python = ">=3.8"
 dependencies = ["requests"]
 keywords = [
-  "crypto",
-  "bitcoin",
-  "binance",
-  "coinbase",
-  "crypto-payment",
-  "django-payment",
-  "flask-payment",
-  "credit-card-to-crypto",
+  "crypto checkout",
+    "binance api",
+    "binance c2c",
+    "crypto payment",
+    "usdt payment",
+    "binance payment",
+    "bitcoin payment",
+    "crypto api",
+	"bitcoin payment gateway",
+	"best crypto payment gateway", 
+	  "fiat to crypto payment gateway",
+	  "cryptocurrency payment gateway"
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
