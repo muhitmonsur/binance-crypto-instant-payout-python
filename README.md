@@ -1,6 +1,8 @@
-# 🪙 Binance & Crypto Payment Gateway for Python
-
-> Accept Bitcoin, USDT, USDC, ETH, and BNB payments directly into your wallet — no middleman, no merchant account, no KYC required.
+# 🪙 Crypto gateway || Binance API (no merchant account needed) || all instant payout
+Server-side SDK for connecting python applications through payerurl api . Use it with python code, Django, Flask , FastAPI .
+> Receive customer payments directly and instantly in your crypto wallet. Accept BTC, ETH, USDT, and USDC from customers across all major networks.
+> 
+> Accept payment using your binance regular account QR code payment (C2C). 
 
 **Powered by [PayerURL](https://payerurl.com)** — the direct-to-wallet crypto payment processor for Python developers.
 
@@ -11,6 +13,20 @@
 [![GitHub Stars](https://img.shields.io/github/stars/muhitmonsur/binance-and-crypto-payment?style=social)](https://github.com/muhitmonsur/binance-and-crypto-payment)
 
 🔴 **[LIVE DEMO](https://python.payerurl.com/)** | 🔑 **[Get API Key](https://dash.payerurl.com)** | 💬 **[Telegram Support](https://t.me/Payerurl)**
+
+---
+## Overview
+
+This payment gateway lets customers pay directly on your store's checkout page. Once paid, the order automatically confirms via instant webhooks. Store owners can view complete transaction records in their PayerURL dashboard. PayerURL is safe, secure, and uses real-time exchange rates.
+
+Depending on your PayerURL settings, your checkout offers:
+
+- Popular Cryptos: Accepts Bitcoin, Ethereum, USDT, and USDC.
+- Major Networks: Works on TRON (TRC20), Ethereum (ERC20), Binance Smart Chain (BEP20), and Bitcoin networks.
+- Binance QR Code: Customers can pay by scanning a QR code with a personal Binance account—no merchant account needed.
+- Global Currencies: Supports 169+ local currencies with automatic, live conversion to crypto.
+- Card Payments: Options to buy crypto and pay instantly using credit cards, debit cards, Google Pay, or Apple Pay.
+- New Address Per Order: Creates a unique receiving address for every order using XPUB to keep payments private and secure.
 
 ---
 
@@ -603,6 +619,74 @@ MIT License — free for personal and commercial use.
 
 ---
 
-## 🔑 Keywords
+### 🌐 Description
 
-`crypto` `bitcoin` `ethereum` `binance` `coinbase` `usdt` `usdc` `bnb` `tron` `payment` `payment-gateway` `crypto-payment-gateway` `cryptocurrency-payment` `bitcoin-payment` `binance-pay` `binance-api` `accept-crypto` `crypto-checkout` `django-payment` `flask-payment` `fastapi-payment` `usdt-trc20` `usdt-erc20` `no-kyc-payment` `instant-settlement` `crypto-webhook` `direct-to-wallet` `credit-card-to-crypto`
+This SDK, powered by [PayerURL](https://payerurl.com), is a **non-custodial** crypto payment gateway that connects WooCommerce directly to your wallets. Payments receive in your wallet instantly, with no middlemen.
+
+With **XPUB (Extended Public Key)** support, the plugin can rotate through unlimited receiving addresses. This suits high-volume stores, crypto exchanges, and enterprise merchants.
+
+### ⚙️ How It Works
+
+1. The customer picks a cryptocurrency at checkout.
+2. Your fiat price (USD, EUR, GBP, JPY, CAD, AUD and 160+ more) is converted at the **live exchange rate**.
+3. The customer pays on-chain or with Binance Pay.
+4. Once the payment is confirmed, funds are credited **instantly to your wallet**.
+5. The WooCommerce order moves to **Processing** automatically through the API webhook. No manual steps are needed.
+
+---
+
+### 🌐 Supported Cryptocurrencies
+
+| Currency | Network / Method | Notes |
+|---|---|---|
+| **Bitcoin (BTC)** | Bitcoin | The world's #1 cryptocurrency |
+| **Ethereum (ETH)** | ERC20 | Leading smart-contract blockchain |
+| **USDT** | TRC20 (TRON) | Ultra-low fees |
+| **USDT** | ERC20 (Ethereum) | Tether on Ethereum |
+| **USDC** | ERC20 (Ethereum) | Trusted stablecoin |
+| **Binance QR Code** | Scan-to-pay | Contactless |
+| **TON** | The Open Network | |
+| **XPUB addresses** | HD wallet | Auto-rotating, unlimited transactions |
+
+---
+
+### ✨ Key Features
+
+| Feature | Detail |
+|---|---|
+| 🔑 **XPUB integration** | A unique address is generated for every order, for mass-volume transactions |
+| 🔗 **10+ crypto networks** | BTC, ETH, USDT (TRC20/ERC20), USDC (ERC20), Binance Pay, Binance QR, TON and more |
+| 💱 **169+ fiat currencies** | USD, EUR, GBP, JPY, CAD, AUD, INR and more, at real-time rates |
+| 🏦 **Non-custodial & trustless** | Funds go straight to your wallet. We never hold your crypto |
+| 🆓 **No KYC** | No identity verification on the Basic (free) plan |
+| 🚫 **No bank account needed** | Accept crypto with no traditional banking setup |
+| 💳 **Buy crypto with card or bank** | Customers can pay with Visa, Mastercard, credit/debit card or bank transfer. It is auto-converted to crypto for you |
+| ⏳ **Pay Later** | Flexible payment timing for customers |
+| ➗ **Auto partial-payment handling** | Order is marked *Processing* when ≥ 90% of the payment is received |
+| 🏷️ **Crypto discounts** | Offer crypto-specific discounts to encourage on-chain payments |
+| 📈 **Live exchange rate** | Real-time crypto/fiat conversion at checkout |
+| 🧱 **WooCommerce Blocks compatible** | Fully supports the modern checkout blocks |
+| 🚀 **HPOS compatible** | Ready for WooCommerce High-Performance Order Storage |
+| 🌍 **5 languages** | English, Spanish, Russian, Arabic and Portuguese |
+| ⚡ **Easy API key setup** | One-click credential check and save |
+| 📖 **Free & open source** | No hidden fees on the plugin itself |
+
+---
+
+
+
+## 🖼 Screenshots
+
+![Screenshot 1](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-1.png)
+![Screenshot 2](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-2.png)
+![Screenshot 4](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-4.png)
+![Screenshot 5](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-5.png)
+![Screenshot 6](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-6.png)
+![Screenshot 7](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-7.png)
+![Screenshot 8](https://raw.githubusercontent.com/muhitmonsur/assets/refs/heads/main/screenshot-8.png)
+
+---
+
+## 🏷️ Keywords
+
+`crypto payment` `bitcoin payment laravel` `binance payment gateway` `usdt payment laravel` `usdc payment laravel` `crypto checkout laravel` `binance qr code laravel`  `binance pay api` `laravel crypto gateway` `best crypto payment gateway` `fiat to crypto payment gateway` `cryptocurrency payment gateway`
